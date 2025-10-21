@@ -1,0 +1,252 @@
+name: Generate Weekly KVMARM Report
+
+on:
+  # 每周一上午9点（东八区 UTC+8）= UTC 时间周一凌晨1点
+  schedule:
+    - cron: '0 1 * * 1'
+
+  # 支持手动触发
+  workflow_dispatch:
+    inputs:
+      start_date:
+        description: '起始日期 (YYYY-MM-DD, 可选)'
+        required: false
+        type: string
+      end_date:
+        description: '结束日期 (YYYY-MM-DD, 可选)'
+        required: false
+        type: string
+      use_ai:
+        description: '使用 AI 总结'
+        required: false
+        type: boolean
+        default: false
+
+# 设置权限
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+jobs:
+  generate-report:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: |
+          pip install openai anthropic
+
+      - name: Clone KVMARM mailing list
+        run: |
+          echo "📥 Cloning KVMARM mailing list repository..."
+          mkdir -p git
+          if [ -d "git/0.git" ]; then
+            echo "Repository exists, fetching updates..."
+            cd git/0.git
+            git fetch --all
+            cd ../..
+          else
+            git clone --mirror https://lore.kernel.org/kvmarm/0 git/0.git
+          fi
+
+          # 检查仓库大小
+          du -sh git/0.git
+          echo "✅ Mailing list repository ready"
+
+      - name: Generate weekly report
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+        run: |
+          echo "🤖 Generating weekly report..."
+
+          # 判断是手动触发还是定时触发
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # 手动触发
+            if [ -n "${{ inputs.start_date }}" ]; then
+              # 批量生成
+              START_ARG="--start ${{ inputs.start_date }}"
+              END_ARG=""
+              if [ -n "${{ inputs.end_date }}" ]; then
+                END_ARG="--end ${{ inputs.end_date }}"
+              fi
+            else
+              # 生成本周
+              START_ARG=""
+              END_ARG=""
+            fi
+
+            # AI 选项
+            if [ "${{ inputs.use_ai }}" = "true" ]; then
+              AI_ARG="--ai openai --model gpt-4o-mini"
+            else
+              AI_ARG="--ai none"
+            fi
+          else
+            # 定时触发：只生成本周，使用 AI
+            START_ARG=""
+            END_ARG=""
+            AI_ARG="--ai openai --model gpt-4o-mini"
+          fi
+
+          # 执行生成
+          python3 analyze_with_ai_summary.py $START_ARG $END_ARG $AI_ARG
+
+          echo "✅ Report generated successfully"
+
+      - name: Create index redirect
+        run: |
+          echo "📄 Creating index.html redirect to current week..."
+
+          # 获取当前周信息
+          YEAR=$(date +%Y)
+          WEEK=$(date +%V)
+          CURRENT_WEEK_FILE="kvmarm_${YEAR}_week${WEEK}.html"
+
+          # 创建 index.html 重定向到当前周
+          cat > docs/index.html << 'EOFHTML'
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVMARM Mailing List - Current Week</title>
+    <style>
+        body {
+            font-family: 'Courier New', monospace;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: #f5f5f5;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border: 2px solid #333;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h1 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            color: #000;
+        }
+        p {
+            font-size: 1.2em;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        .links {
+            margin-top: 30px;
+        }
+        a {
+            display: inline-block;
+            margin: 10px;
+            padding: 12px 24px;
+            background: #333;
+            color: white;
+            text-decoration: none;
+            border: 2px solid #333;
+            transition: all 0.3s;
+        }
+        a:hover {
+            background: #000;
+            transform: translateY(-2px);
+        }
+    </style>
+    <script>
+        // 自动重定向到当前周
+        window.onload = function() {
+            const now = new Date();
+            const year = now.getFullYear();
+
+            // 计算 ISO 周数
+            const startOfYear = new Date(year, 0, 1);
+            const days = Math.floor((now - startOfYear) / (24 * 60 * 60 * 1000));
+            const week = Math.ceil((days + startOfYear.getDay() + 1) / 7);
+
+            const weekStr = week.toString().padStart(2, '0');
+            const currentWeekFile = `kvmarm_${year}_week${weekStr}.html`;
+
+            // 更新显示
+            document.getElementById('current-week-text').textContent = `${year} Week ${week}`;
+            document.getElementById('current-week-link').href = currentWeekFile;
+
+            // 3秒后自动跳转
+            setTimeout(() => {
+                window.location.href = currentWeekFile;
+            }, 3000);
+        };
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>KVMARM Mailing List</h1>
+        <p>Redirecting to current week report in 3 seconds...</p>
+        <div class="links">
+            <a id="current-week-link" href="#">📅 Current Week (<span id="current-week-text">Loading...</span>)</a>
+            <a href="archive.html">📚 Archive</a>
+        </div>
+    </div>
+</body>
+</html>
+EOFHTML
+
+          echo "✅ Index page created: docs/index.html"
+
+      - name: Configure Git
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "actions@github.com"
+
+      - name: Commit and push reports
+        run: |
+          # 添加生成的文件
+          git add docs/*.html docs/*.md
+
+          # 检查是否有变化
+          if git diff --staged --quiet; then
+            echo "ℹ️  No changes to commit"
+          else
+            # 提交变化
+            YEAR=$(date +%Y)
+            WEEK=$(date +%V)
+            git commit -m "chore: Generate weekly report ${YEAR}W${WEEK}
+
+Generated by GitHub Actions
+Timestamp: $(date -u +"%Y-%m-%d %H:%M:%S UTC")
+"
+
+            # 推送到仓库
+            git push
+            echo "✅ Reports committed and pushed"
+          fi
+
+      - name: Upload artifact for GitHub Pages
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: 'docs'
+
+  # 部署到 GitHub Pages
+  deploy:
+    needs: generate-report
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
