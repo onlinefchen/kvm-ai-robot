@@ -2,6 +2,18 @@
 
 自动从 KVMARM 邮件列表 Git 仓库生成周报告，支持 AI 总结（OpenAI/Claude）和基于规则的总结。
 
+## 🌐 在线查看报告
+
+**GitHub Pages**: https://onlinefchen.github.io/kvm-ai-robot/
+
+- 📅 **当前周报告**: https://onlinefchen.github.io/kvm-ai-robot/ （自动跳转）
+- 📚 **历史归档**: https://onlinefchen.github.io/kvm-ai-robot/archive.html
+- 🤖 **GitHub Actions**: https://github.com/onlinefchen/kvm-ai-robot/actions
+
+每周一上午 9:00（北京时间）自动更新！
+
+---
+
 ## 快速开始
 
 ### 1. 生成本周报告（默认）
