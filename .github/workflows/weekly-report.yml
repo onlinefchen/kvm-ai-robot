@@ -7,18 +7,13 @@ on:
   workflow_dispatch:
     inputs:
       start_date:
-        description: '起始日期 (YYYY-MM-DD, 可选)'
+        description: '起始日期 (YYYY-MM-DD, 可选，默认生成本周)'
         required: false
         type: string
       end_date:
-        description: '结束日期 (YYYY-MM-DD, 可选)'
+        description: '结束日期 (YYYY-MM-DD, 可选，默认到今天)'
         required: false
         type: string
-      use_ai:
-        description: '使用 AI 总结'
-        required: false
-        type: boolean
-        default: false
 
 permissions:
   contents: write
@@ -63,7 +58,9 @@ jobs:
         run: |
           echo "🤖 Generating weekly report..."
           
+          # 设置日期参数
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            # 手动触发
             if [ -n "${{ inputs.start_date }}" ]; then
               START_ARG="--start ${{ inputs.start_date }}"
               END_ARG=""
@@ -74,18 +71,22 @@ jobs:
               START_ARG=""
               END_ARG=""
             fi
-            
-            if [ "${{ inputs.use_ai }}" = "true" ]; then
-              AI_ARG="--ai openai --model gpt-4o-mini"
-            else
-              AI_ARG="--ai none"
-            fi
           else
+            # 定时触发：只生成本周
             START_ARG=""
             END_ARG=""
-            AI_ARG="--ai openai --model gpt-4o-mini"
           fi
           
+          # 自动检测是否使用 AI
+          if [ -n "$OPENAI_API_KEY" ]; then
+            echo "✅ 检测到 OPENAI_API_KEY，使用 AI 总结"
+            AI_ARG="--ai openai --model gpt-4o-mini"
+          else
+            echo "ℹ️  未检测到 OPENAI_API_KEY，使用基于规则的总结"
+            AI_ARG="--ai none"
+          fi
+          
+          # 执行生成
           python3 analyze_with_ai_summary.py $START_ARG $END_ARG $AI_ARG
           echo "✅ Report generated successfully"
 
