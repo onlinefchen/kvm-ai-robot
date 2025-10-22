@@ -14,6 +14,11 @@ on:
         description: '结束日期 (YYYY-MM-DD, 可选，默认到今天)'
         required: false
         type: string
+      force_regenerate:
+        description: '强制重新生成（覆盖已存在的历史报告）'
+        required: false
+        type: boolean
+        default: false
 
 permissions:
   contents: write
@@ -85,9 +90,16 @@ jobs:
             echo "ℹ️  未检测到 OPENAI_API_KEY，使用基于规则的总结"
             AI_ARG="--ai none"
           fi
-          
+
+          # 检查是否强制重新生成
+          FORCE_ARG=""
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_regenerate }}" = "true" ]; then
+            echo "🔄 强制重新生成模式：将覆盖所有已存在的报告"
+            FORCE_ARG="--force"
+          fi
+
           # 执行生成
-          python3 analyze_with_ai_summary.py $START_ARG $END_ARG $AI_ARG
+          python3 analyze_with_ai_summary.py $START_ARG $END_ARG $AI_ARG $FORCE_ARG
           echo "✅ Report generated successfully"
 
       - name: Create index redirect

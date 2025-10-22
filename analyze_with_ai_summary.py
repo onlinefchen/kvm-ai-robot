@@ -46,7 +46,7 @@ def estimate_tokens(text: str) -> int:
 
 class Email:
     """邮件对象"""
-    def __init__(self, commit_hash: str, email_msg: str):
+    def __init__(self, commit_hash: str, email_msg: str, is_in_time_range: bool = True):
         self.commit_hash = commit_hash
         self.msg = message_from_string(email_msg)
 
@@ -64,6 +64,9 @@ class Email:
         self.in_reply_to = self._clean_header(self.msg.get('In-Reply-To', ''))
         self.references = self._parse_references(self.msg.get('References', ''))
         self.body = self._extract_body()
+
+        # 标记是否在当前报告的时间范围内（True=本周新邮件，False=历史上下文邮件）
+        self.is_in_time_range = is_in_time_range
 
     def _clean_header(self, header: str) -> str:
         return header.strip().strip('<>')
@@ -169,22 +172,43 @@ class AISummarizer:
 
     def _prepare_thread_content(self, thread_emails: List[Email]) -> Tuple[str, str]:
         """
-        准备 thread 内容，包含所有邮件
+        准备 thread 内容，区分历史邮件和本周新邮件
         返回：(准备好的内容, 策略说明)
         """
+        # 分离历史邮件和本周邮件
+        historical_emails = [e for e in thread_emails if not e.is_in_time_range]
+        new_emails = [e for e in thread_emails if e.is_in_time_range]
+
         content = f"主题: {thread_emails[0].subject}\n"
-        content += f"总邮件数: {len(thread_emails)}\n"
+        content += f"总邮件数: {len(thread_emails)} (历史: {len(historical_emails)}, 本周新: {len(new_emails)})\n"
         content += f"参与者: {len(set(e.get_author_name() for e in thread_emails))}\n\n"
 
-        # 包含所有邮件，不做任何截断
-        for i, email in enumerate(thread_emails, 1):
-            content += f"--- 邮件 {i}/{len(thread_emails)} - {email.get_author_name()} ---\n"
-            body = email.body if email.body else "[无正文]"
-            content += f"{body}\n\n"
+        # 先显示历史邮件（如果有）
+        if historical_emails:
+            content += "=== 历史讨论（作为上下文） ===\n\n"
+            for i, email in enumerate(historical_emails, 1):
+                date_str = email.date.strftime('%Y-%m-%d') if email.date else '未知日期'
+                content += f"--- 历史邮件 {i}/{len(historical_emails)} - {email.get_author_name()} ({date_str}) ---\n"
+                content += f"主题: {email.raw_subject}\n"
+                body = email.body if email.body else "[无正文]"
+                # 历史邮件只保留前500字符，避免 token 过多
+                if len(body) > 500:
+                    body = body[:500] + "\n[...内容过长，已截断...]"
+                content += f"{body}\n\n"
+
+        # 再显示本周新邮件
+        if new_emails:
+            content += "=== 本周新讨论 ===\n\n"
+            for i, email in enumerate(new_emails, 1):
+                date_str = email.date.strftime('%Y-%m-%d') if email.date else '未知日期'
+                content += f"--- 本周邮件 {i}/{len(new_emails)} - {email.get_author_name()} ({date_str}) ---\n"
+                content += f"主题: {email.raw_subject}\n"
+                body = email.body if email.body else "[无正文]"
+                content += f"{body}\n\n"
 
         # 估算 token 数用于显示
         total_tokens = estimate_tokens(content)
-        strategy = f"完整 thread ({total_tokens} tokens)"
+        strategy = f"完整 thread (历史:{len(historical_emails)} 新:{len(new_emails)}, {total_tokens} tokens)"
 
         return content, strategy
 
@@ -206,10 +230,16 @@ class OpenAISummarizer(AISummarizer):
 
         prompt = f"""请分析以下邮件列表 thread 的讨论内容，生成一个简洁的中文总结（200-300字）。
 
+**重要说明**：
+- 邮件分为两部分：「历史讨论」（上下文）和「本周新讨论」
+- 历史讨论是之前的 patch 或讨论，用于提供背景
+- 本周新讨论是最近一周的回复或进展
+- 请在总结中区分说明：patch 是什么、之前讨论了什么、本周有什么新进展
+
 总结应包括：
-1. 主要讨论的技术问题或补丁内容
-2. 关键的技术要点
-3. 主要的讨论结论或待解决的问题
+1. 原始 patch/问题的内容（来自历史讨论）
+2. 之前的讨论要点（如果有历史讨论）
+3. 本周的新讨论、进展或结论
 
 Thread 内容：
 {thread_content}
@@ -249,10 +279,16 @@ class AnthropicSummarizer(AISummarizer):
 
         prompt = f"""请分析以下邮件列表 thread 的讨论内容，生成一个简洁的中文总结（200-300字）。
 
+**重要说明**：
+- 邮件分为两部分：「历史讨论」（上下文）和「本周新讨论」
+- 历史讨论是之前的 patch 或讨论，用于提供背景
+- 本周新讨论是最近一周的回复或进展
+- 请在总结中区分说明：patch 是什么、之前讨论了什么、本周有什么新进展
+
 总结应包括：
-1. 主要讨论的技术问题或补丁内容
-2. 关键的技术要点和实现细节
-3. 主要的讨论结论或待解决的问题
+1. 原始 patch/问题的内容（来自历史讨论）
+2. 之前的讨论要点（如果有历史讨论）
+3. 本周的新讨论、进展或结论
 4. 如果有争议，简要说明不同观点
 
 Thread 内容：
@@ -399,6 +435,64 @@ class ThreadAnalyzer:
                     self.emails[email.message_id] = email
 
         print(f"成功解析 {len(self.emails)} 封邮件\n")
+
+    def fetch_referenced_emails(self):
+        """获取被引用但不在当前时间范围内的历史邮件（用于提供完整上下文）"""
+        print("正在查找历史引用邮件...")
+
+        # 收集所有被引用的 Message-ID
+        referenced_ids = set()
+        for email in self.emails.values():
+            if email.in_reply_to:
+                referenced_ids.add(email.in_reply_to)
+            referenced_ids.update(email.references)
+
+        # 找出不在当前邮件列表中的引用
+        missing_ids = referenced_ids - set(self.emails.keys())
+
+        if not missing_ids:
+            print("  没有发现缺失的历史引用\n")
+            return
+
+        print(f"  发现 {len(missing_ids)} 个历史引用，开始获取...")
+        print("  （获取前2周的邮件作为历史上下文...）")
+        fetched_count = 0
+
+        # 策略：获取时间范围之前 14 天的所有邮件
+        # 这样可以覆盖大部分被引用的邮件，避免逐个搜索
+        if self.since:
+            # 计算扩展的开始日期（向前推14天）
+            from datetime import datetime, timedelta
+            since_date = datetime.strptime(self.since, '%Y-%m-%d')
+            extended_since = (since_date - timedelta(days=14)).strftime('%Y-%m-%d')
+
+            cmd = ['git', f'--git-dir={self.git_dir}', 'log', '--all',
+                   f'--since={extended_since} 00:00:00', f'--until={self.since} 00:00:00',
+                   '--format=%H']
+            result = subprocess.run(cmd, capture_output=True, text=True)
+
+            if result.returncode == 0 and result.stdout.strip():
+                historical_commits = result.stdout.strip().split('\n')
+                print(f"  发现 {len(historical_commits)} 封可能相关的历史邮件，开始筛选...")
+
+                for commit in historical_commits:
+                    cmd = ['git', f'--git-dir={self.git_dir}', 'show', f'{commit}:m']
+                    result = subprocess.run(cmd, capture_output=True)
+
+                    if result.returncode == 0:
+                        try:
+                            email_text = result.stdout.decode('utf-8')
+                        except UnicodeDecodeError:
+                            email_text = result.stdout.decode('utf-8', errors='replace')
+
+                        # 标记为历史邮件（不在当前时间范围内）
+                        email = Email(commit, email_text, is_in_time_range=False)
+                        # 只添加被引用的邮件
+                        if email.message_id and email.message_id in missing_ids:
+                            self.emails[email.message_id] = email
+                            fetched_count += 1
+
+        print(f"  成功获取 {fetched_count} 封历史邮件作为上下文\n")
 
     def build_threads(self) -> Dict[str, List[Email]]:
         print("正在构建 thread 结构...")
@@ -918,9 +1012,23 @@ class ThreadAnalyzer:
             padding: 2px 0;
             color: #222;
         }}
+        .email-item.historical {{
+            background: #f5f5f5;
+            border-left: 3px solid #999;
+            padding-left: 8px;
+            opacity: 0.8;
+        }}
+        .email-item.new {{
+            background: #fffef0;
+            border-left: 3px solid #0066cc;
+            padding-left: 8px;
+        }}
         .email-date {{
             color: #0066cc;
             font-weight: bold;
+        }}
+        .email-date.historical {{
+            color: #666;
         }}
         .email-sender {{
             color: #c30;
@@ -928,6 +1036,16 @@ class ThreadAnalyzer:
         }}
         .email-subject {{
             color: #000;
+        }}
+        .historical-marker {{
+            color: #999;
+            font-size: 0.85em;
+            font-style: italic;
+        }}
+        .new-marker {{
+            color: #0066cc;
+            font-size: 0.85em;
+            font-weight: bold;
         }}
         .archive-link {{
             display: inline-block;
@@ -1000,7 +1118,13 @@ class ThreadAnalyzer:
                     author_name = email.get_author_name()
                     author_email = email.get_author_email()
                     date = email.date.strftime('%Y-%m-%d') if email.date else 'N/A'
-                    html_content += f"""<div class="email-item"><span class="email-date">[{date}]</span> <span class="email-subject">{email.raw_subject}</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: {author_name} <span class="email-sender">&lt;{author_email}&gt;</span></div>
+
+                    # 区分历史邮件和本周新邮件
+                    email_class = "email-item historical" if not email.is_in_time_range else "email-item new"
+                    date_class = "email-date historical" if not email.is_in_time_range else "email-date"
+                    marker = '<span class="historical-marker">[历史]</span> ' if not email.is_in_time_range else '<span class="new-marker">[本周]</span> '
+
+                    html_content += f"""<div class="{email_class}">{marker}<span class="{date_class}">[{date}]</span> <span class="email-subject">{email.raw_subject}</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: {author_name} <span class="email-sender">&lt;{author_email}&gt;</span></div>
 """
 
                 html_content += """                </div>
@@ -1116,6 +1240,7 @@ def generate_week_report(year: int, week: int, monday: str, sunday: str,
     # 运行分析
     analyzer = ThreadAnalyzer(git_dir, 7, summarizer, monday, sunday)
     analyzer.fetch_emails()
+    analyzer.fetch_referenced_emails()  # 获取历史引用邮件作为上下文
     threads = analyzer.build_threads()
     categories = analyzer.categorize_threads(threads)
 
@@ -1162,6 +1287,8 @@ def main():
     parser.add_argument('--git-dir', type=str,
                        default='git/0.git',
                        help='Git 仓库路径 (默认: git/0.git)')
+    parser.add_argument('--force', action='store_true',
+                       help='强制重新生成（覆盖已存在的历史报告）')
     parser.add_argument('--ai', type=str, choices=['openai', 'claude', 'none'],
                        default='none',
                        help='AI 后端: openai, claude, 或 none (默认: none)')
@@ -1264,13 +1391,16 @@ def main():
             html_file = os.path.join(output_dir, f"{base_name}.html")
 
             if os.path.exists(md_file) and os.path.exists(html_file):
-                if not is_current_week:
+                if not is_current_week and not args.force:
                     print("ℹ️  历史报告已存在，跳过")
                     skip_count += 1
                     print()
                     continue
                 else:
-                    print("🔄 当前周报告已存在，将重新生成")
+                    if is_current_week:
+                        print("🔄 当前周报告已存在，将重新生成")
+                    else:
+                        print("🔄 强制重新生成历史报告（--force 模式）")
 
             # 生成报告
             try:
