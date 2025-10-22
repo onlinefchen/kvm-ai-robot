@@ -144,6 +144,20 @@ class Email:
             return f"{name} <{email}>"
         return name
 
+    def get_patch_series_id(self) -> Optional[str]:
+        """
+        提取 patch series 标识符
+        例如：[PATCH v3 07/25] -> "PATCH v3 /25"
+        返回 None 如果不是 patch series
+        """
+        # 匹配 [PATCH vX YY/ZZ] 或 [PATCH YY/ZZ] 格式
+        match = re.search(r'\[(PATCH(?:\s+v\d+)?)\s+\d+/(\d+)\]', self.raw_subject)
+        if match:
+            series_name = match.group(1)  # 例如 "PATCH v3"
+            total_patches = match.group(2)  # 例如 "25"
+            return f"{series_name} /{total_patches}"  # 例如 "PATCH v3 /25"
+        return None
+
 
 class AISummarizer:
     """AI 总结器基类"""
@@ -389,7 +403,9 @@ class ThreadAnalyzer:
     def build_threads(self) -> Dict[str, List[Email]]:
         print("正在构建 thread 结构...")
         threads = defaultdict(list)
+        series_to_root = {}  # 记录 patch series 到其 root_id 的映射
 
+        # 第一步：基于 Message-ID 和 References 构建基本 threads
         for email in self.emails.values():
             root_id = email.get_thread_root()
             visited = set()
@@ -402,11 +418,55 @@ class ThreadAnalyzer:
                 root_id = parent_root
             threads[root_id].append(email)
 
-        for thread_id in threads:
-            threads[thread_id].sort(key=lambda e: e.date if e.date else datetime.min.replace(tzinfo=timezone.utc))
+            # 如果这是 patch series 的一部分，记录映射
+            series_id = email.get_patch_series_id()
+            if series_id:
+                if series_id not in series_to_root:
+                    series_to_root[series_id] = root_id
+                elif series_to_root[series_id] != root_id:
+                    # 同一 series 但不同 root，需要合并
+                    old_root = series_to_root[series_id]
+                    # 将当前 thread 的所有邮件移动到第一个 root 下
+                    threads[old_root].extend(threads[root_id])
+                    del threads[root_id]
+                    # 更新所有使用 root_id 的邮件
+                    for other_email in self.emails.values():
+                        other_series = other_email.get_patch_series_id()
+                        if other_series == series_id:
+                            # 确保所有相同 series 的邮件都指向同一个 root
+                            pass
 
-        print(f"找到 {len(threads)} 个不同的 thread\n")
-        return threads
+        # 第二步：再次遍历，确保所有 patch series 的邮件都在同一个 thread 下
+        merged_threads = defaultdict(list)
+        processed_roots = set()
+
+        for root_id, emails in threads.items():
+            if root_id in processed_roots:
+                continue
+
+            # 检查这个 thread 中的第一个邮件是否属于 patch series
+            if emails:
+                series_id = emails[0].get_patch_series_id()
+                if series_id and series_id in series_to_root:
+                    canonical_root = series_to_root[series_id]
+                    merged_threads[canonical_root].extend(emails)
+                    processed_roots.add(root_id)
+                else:
+                    merged_threads[root_id] = emails
+                    processed_roots.add(root_id)
+
+        # 第三步：排序每个 thread 中的邮件
+        for thread_id in merged_threads:
+            merged_threads[thread_id].sort(key=lambda e: e.date if e.date else datetime.min.replace(tzinfo=timezone.utc))
+
+        print(f"找到 {len(merged_threads)} 个不同的 thread\n")
+        if series_to_root:
+            print(f"识别到 {len(series_to_root)} 个 patch series:")
+            for series_id, root_id in series_to_root.items():
+                email_count = len([e for e in merged_threads[root_id] if e.get_patch_series_id() == series_id])
+                print(f"  - {series_id}: {email_count} 个邮件")
+
+        return merged_threads
 
     def categorize_threads(self, threads: Dict[str, List[Email]]) -> Dict[str, List[tuple]]:
         categories = {
