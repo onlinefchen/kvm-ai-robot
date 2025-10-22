@@ -1,48 +1,54 @@
 # KVMARM 邮件列表 AI 总结报告
 
-**生成时间**: 2025-10-21 20:46:19
+**生成时间**: 2025-10-22 11:28:48
 
 **分析周期**: 最近 7 天
 
 ## 📊 总体统计
 
-- **总邮件数**: 117
-- **总 Thread 数**: 29
+- **总邮件数**: 149
+- **总 Thread 数**: 27
 - **大型 Thread** (>20封): 1 个
 
 ### 分类分布
 
-- **PATCH**: 20 threads (80 邮件)
+- **PATCH**: 21 threads (110 邮件)
 - **RFC**: 2 threads (11 邮件)
-- **Bug Report**: 1 threads (1 邮件)
-- **Discussion**: 2 threads (14 邮件)
-- **Other**: 4 threads (11 邮件)
+- **Bug Report**: 1 threads (2 邮件)
+- **Discussion**: 2 threads (18 邮件)
+- **Other**: 1 threads (8 邮件)
 
 ---
 
 ## 📌 PATCH
 
-共 20 个 thread
+共 21 个 thread
 
 ---
 
 ### Thread 1: [PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support
 
-**📧 邮件数**: 32 | **👥 参与者**: 4 | **📅 开始时间**: Tue,  7 Oct 2025 15:14:08 -0700
+**📧 邮件数**: 33 | **👥 参与者**: 4 | **📅 开始时间**: Tue,  7 Oct 2025 15:14:08 -0700
 
 #### 🤖 AI 总结
 
-本邮件线程主要讨论了针对 KVM 的 guest_memfd 功能添加 NUMA 内存策略支持的补丁系列（PATCH v12 00/12）。该补丁旨在改善虚拟机内存的 NUMA 感知能力，使得 VMM 可以通过 mbind() 系统调用来设置期望的 NUMA 策略，从而实现更精细的内存分配控制。
+本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）中的 guest_memfd 功能，特别是新增的 NUMA（非统一内存访问）内存策略支持。以下是讨论的主要内容：
 
-关键技术要点包括：
-1. 引入了 gmem_inode 结构以存储 NUMA 策略，并使用 slab 分配的 inode 缓存来管理 guest_memfd 的内存。
-2. 实现了 vm_ops 接口，允许 VMM 在 mmap 操作中使用 NUMA 策略，并通过 mpol_shared_policy_lookup() 来检索和应用内存策略。
-3. 进行了多项代码重构和清理，例如将 gmem 的结构名称更改为 gmem_file，以提高代码的可读性和一致性。
+1. **原始 Patch/问题内容**：
+   本次讨论的补丁系列（PATCH v12）旨在为 KVM 的 guest_memfd 添加 NUMA 内存策略支持，以便更好地管理虚拟机的内存分配。补丁包括对现有代码的重构和功能增强，以支持 NUMA-aware 的内存放置。
 
-讨论的主要结论包括：
-- 参与者一致认为补丁的设计合理，能够有效地支持 NUMA 策略。
-- 仍需解决一些细节问题，例如如何处理没有定义策略时的行为，以及在未来支持大页时的内存分配策略。
-- 参与者对补丁的测试结果表示满意，并确认将继续进行代码审查和合并工作。
+2. **之前讨论要点**：
+   之前的讨论集中在如何实现 NUMA 策略的有效管理，特别是如何在 guest_memfd 中使用自定义 inode 来存储内存策略。此外，讨论还涉及到如何通过 mbind() 系统调用来设置和获取内存策略，以确保虚拟机的内存分配符合 NUMA 的要求。
+
+3. **本周的新讨论、进展或结论**：
+   本周的讨论主要集中在补丁的具体实现细节上，包括：
+   - 对 `struct kvm_gmem` 进行重命名为 `struct gmem_file`，以更清晰地反映其功能。
+   - 增加了用于遍历 gmem_files 的宏定义，简化了代码。
+   - 引入了 slab 分配的 inode 缓存，以提高性能。
+   - 实现了 NUMA 策略的共享支持，允许 VMM 通过 mmap 操作管理内存。
+   - 增强了自测试功能，添加了对 NUMA 策略的验证测试。
+
+   参与者对补丁的各个部分进行了审查和反馈，整体上对补丁的方向表示支持，并提出了一些具体的改进建议。
 
 #### 📝 邮件列表
 
@@ -135,22 +141,78 @@
 32. **[10-10 14:57]** Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
  shared policy
    - 发件人: Ackerley Tng <ackerleytng@google.com>
+33. **[10-13 01:30]** Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy
+   - 发件人: Garg, Shivank <shivankg@amd.com>
 
 ---
 
-### Thread 2: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing PMSCR_EL1 in VHE
+### Thread 2: [PATCH v7 03/12] mm: introduce AS_NO_DIRECT_MAP
+
+**📧 邮件数**: 13 | **👥 参与者**: 5 | **📅 开始时间**: Wed, 24 Sep 2025 16:10:43 +0100
+
+#### 🤖 AI 总结
+
+本邮件讨论的主题是关于引入 `AS_NO_DIRECT_MAP` 的补丁（patch），该补丁旨在为某些类型的内存映射提供支持，尤其是针对 `secretmem` 映射（如 `memfd_secret()`）和未来的 `guest_memfd` 配置。补丁的核心是拒绝在当前拒绝 `secretmem` 的所有位置接受这种新类型的映射。
+
+在之前的讨论中，参与者们主要集中在如何处理直接映射的 TLB（翻译后备页表）刷新问题上。Patrick Roy 提出了一个补丁，允许在直接映射操作后选择不执行 TLB 刷新，以提高性能，但其他参与者对此表示担忧，认为这样可能会引入不确定性和潜在的安全问题。经过多次讨论，大家达成共识，应该优先保证安全性，默认情况下执行 TLB 刷新，而非执行的选项应为可选并有详细文档。
+
+在本周的新讨论中，Patrick Roy 提出了一个新的思路，建议对 TLB 刷新进行批处理和延迟处理，并设定一个“截止日期”，在达到一定条件时强制执行 TLB 刷新。他在 QEMU 中进行了初步性能测试，结果显示这种批处理方法的性能接近于完全不执行 TLB 刷新的方案。参与者们对这一提议表示关注，认为这可能是解决性能问题的有效方法。
+
+#### 📝 邮件列表
+
+1. **[09-24 16:10]** [PATCH v7 03/12] mm: introduce AS_NO_DIRECT_MAP
+   - 发件人: Patrick Roy <patrick.roy@campus.lmu.de>
+2. **[09-24 15:22]** [PATCH v7 04/12] KVM: guest_memfd: Add stub for
+ kvm_arch_gmem_invalidate
+   - 发件人: Roy, Patrick <roypat@amazon.co.uk>
+3. **[09-24 15:22]** [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling TLB
+ flushing
+   - 发件人: Roy, Patrick <roypat@amazon.co.uk>
+4. **[09-25 11:27]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: Dave Hansen <dave.hansen@intel.com>
+5. **[09-25 21:20]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: David Hildenbrand <david@redhat.com>
+6. **[09-25 12:59]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: Dave Hansen <dave.hansen@intel.com>
+7. **[09-25 22:13]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: David Hildenbrand <david@redhat.com>
+8. **[09-26 10:46]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: Patrick Roy <patrick.roy@linux.dev>
+9. **[09-26 11:53]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for
+ disabling TLB flushing
+   - 发件人: Will Deacon <will@kernel.org>
+10. **[09-26 22:09]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: David Hildenbrand <david@redhat.com>
+11. **[09-27 08:38]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: Patrick Roy <patrick.roy@linux.dev>
+12. **[09-29 12:20]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: David Hildenbrand <david@redhat.com>
+13. **[10-11 16:32]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
+ TLB flushing
+   - 发件人: Patrick Roy <patrick.roy@linux.dev>
+
+---
+
+### Thread 3: [PATCH] KVM: arm64: Check cpu_has_spe() before initializing PMSCR_EL1 in VHE
 
 **📧 邮件数**: 9 | **👥 参与者**: 5 | **📅 开始时间**: Tue,  7 Oct 2025 23:53:56 +0530
 
 #### 🤖 AI 总结
 
-在此次邮件讨论中，主要关注的是针对 KVM 在 VHE 模式下初始化 PMSCR_EL1 的补丁问题。Mukesh Ojha 提出了一个补丁，目的是在初始化 PMSCR_EL1 之前检查 CPU 是否支持 SPE（Sampling Profiling Extension），以避免在某些情况下导致系统启动卡住的问题。补丁通过添加 `cpu_has_spe()` 函数来实现这一检查。
+本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构中初始化 PMSCR_EL1 寄存器时的一个补丁。补丁的主要内容是增加对 `cpu_has_spe()` 的检查，以确保只有支持 SPE（Sampling Profiling Extension）特性的 CPU 才会初始化 PMSCR_EL1，从而避免在 VHE（Virtualization Host Extensions）模式下启动时出现卡顿问题。
 
-关键技术要点包括：
-1. 补丁修复了 commit efad60e46057 中引入的错误，该错误导致在 VHE 模式下，未正确处理 SPE 支持的情况下初始化 PMSCR_EL1。
-2. 讨论中提到，某些固件可能未正确委托 Profiling Buffer 的所有权，导致 SPE 不可用，这可能是导致问题的根源。
+在之前的讨论中，参与者们关注到在某些情况下，写入 SYS_PMSCR 寄存器可能会导致系统无法正常启动。Mukesh Ojha 提出了这个补丁，并指出通过检查 CPU 是否支持 SPE 特性，可以有效解决该问题。
 
-讨论的主要结论是，虽然补丁可以解决当前的启动问题，但仍需进一步调查固件中 SPE 的可用性问题。参与者一致认为，补丁的实施是必要的，但在长远来看，确保固件的正确性和一致性也同样重要。最终，补丁得到了认可，并计划进行应用。
+本周的新讨论中，Oliver Upton 提出对补丁描述的疑虑，认为在补丁中提到的 `cpu_has_spe()` 函数在补丁之前并不存在，需进一步明确其合理性。Marc Zyngier 也质疑为何会出现 SPE 不可用的情况，认为可能是固件问题。Mukesh 认可了这些观点，并表示将对补丁进行修正，以确保在检查 SPE 可用性时不仅仅依赖版本号，而是更全面地验证其实现。最终，参与者们一致认为，尽管固件存在问题，补丁仍然是解决当前启动问题的有效措施。
 
 #### 📝 邮件列表
 
@@ -182,17 +244,53 @@
 
 ---
 
-### Thread 3: [PATCH] arm64: Revamp HCR_EL2.E2H RES1 detection
+### Thread 4: [PATCH v3 0/9] KVM Selftest Runner
+
+**📧 邮件数**: 7 | **👥 参与者**: 3 | **📅 开始时间**: Tue, 30 Sep 2025 09:36:26 -0700
+
+#### 🤖 AI 总结
+
+本邮件讨论的主题是KVM自测试运行器的补丁系列（PATCH v3 0/9），旨在改进KVM自测试的执行方式。该补丁系列从15个减少到9个，主要目标是提供一个更易于使用的自测试运行器，支持选择单个测试用例或多个测试用例的目录，并在终端上以颜色区分测试结果状态。
+
+在历史讨论中，参与者Vipin Sharma详细介绍了补丁的功能，包括基本的KVM自测试运行器的实现和README文档的添加，旨在帮助用户理解如何使用该工具。
+
+本周的新讨论中，Brendan Jackman提出了一些关于补丁的细节问题，包括该工具与现有kselftest基础设施的关系，以及它是否会影响自测试的数据模型。Sean Christopherson回应了这些问题，强调该运行器的设计是为了满足KVM社区的特定需求，同时保持与其他子系统的独立性。他指出，所有KVM自测试都应能够并行运行，并且该运行器是可选的，用户可以根据需要选择使用。
+
+总体而言，本周讨论集中在补丁的具体实现和使用场景上，参与者们对如何更好地集成和使用该工具进行了深入探讨。
+
+#### 📝 邮件列表
+
+1. **[09-30 09:36]** [PATCH v3 0/9] KVM Selftest Runner
+   - 发件人: Vipin Sharma <vipinsh@google.com>
+2. **[09-30 09:36]** [PATCH v3 1/9] KVM: selftest: Create KVM selftest runner
+   - 发件人: Vipin Sharma <vipinsh@google.com>
+3. **[09-30 09:36]** [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM selftests runner
+   - 发件人: Vipin Sharma <vipinsh@google.com>
+4. **[10-10 09:47]** Re: [PATCH v3 1/9] KVM: selftest: Create KVM selftest runner
+   - 发件人: Brendan Jackman <jackmanb@google.com>
+5. **[10-10 09:58]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
+ selftests runner
+   - 发件人: Brendan Jackman <jackmanb@google.com>
+6. **[10-10 11:14]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
+ selftests runner
+   - 发件人: Sean Christopherson <seanjc@google.com>
+7. **[10-10 12:38]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
+ selftests runner
+   - 发件人: Vipin Sharma <vipinsh@google.com>
+
+---
+
+### Thread 5: [PATCH] arm64: Revamp HCR_EL2.E2H RES1 detection
 
 **📧 邮件数**: 7 | **👥 参与者**: 4 | **📅 开始时间**: Thu,  9 Oct 2025 13:12:39 +0100
 
 #### 🤖 AI 总结
 
-在此次邮件讨论中，主要集中在对 ARM64 架构中 HCR_EL2.E2H RES1 检测机制的改进。Marc Zyngier 提出了一个补丁，旨在解决在某些 CPU（如 Neoverse V2）上，虚拟机无法可靠检测其是否处于 VHE（Virtualization Host Extensions）配置的问题。当前的检测方式依赖于 ID_AA64MMFR4_EL1.E2H0 和 HCR_EL2.E2H 的 RAO/WI 状态，但存在一些 CPU 在这两者之间的特殊情况，导致检测不准确。
+本邮件线程讨论了一个针对 ARM64 架构的补丁，主题为“重构 HCR_EL2.E2H RES1 检测”。该补丁旨在改进对仅实现 FEAT_VHE 而不实现 FEAT_E2H0 的 CPU 的检测方法，特别是解决在 Neoverse V2 系统中，虚拟机无法可靠检测其是否处于 VHE-only 配置的问题。
 
-补丁通过利用 EL1 和 EL2 之间的寄存器重映射，提供了一种新的检测方法，以确保即使在 HCR_EL2.E2H 设置为 0 的情况下，仍能确认是否处于 VHE-only 模式。这一改进不仅解决了 Neoverse V2 上的虚拟机问题，还增强了对不完全遵循架构的 CPU 的检测能力。
+在历史讨论中，补丁的背景是当前存在两种检测方式：通过 ID_AA64MMFR4_EL1.E2H0 寻找或通过 HCR_EL2.E2H 位的 RAO/WI 测试。然而，某些 CPU 的行为不符合这些检测方式，导致虚拟机无法准确识别其运行状态。补丁提出了一种新的检测序列，利用 VHE 寄存器重映射来解决这一问题。
 
-讨论中，参与者一致认可该补丁的有效性，并表示希望将其提交到稳定版本中，以改善用户体验，避免虚拟机意外崩溃的问题。此外，Mark Rutland 提到计划将相关补丁回溯到早期内核版本，以支持使用 RES1 行为的硬件。整体来看，补丁得到了积极的反馈，且讨论中没有提出新的待解决问题。
+本周的新讨论中，Marc Zyngier 提出了补丁的具体实现，并得到了 Mark Rutland 的认可和建议，补丁最终被应用。Jan Kotas 在 Neoverse-V2 机器上进行了测试，结果符合预期。Oliver Upton 表示支持将该补丁发送至稳定版本，并愿意处理回溯工作。Mark Rutland 还提到计划将相关补丁回溯到早期内核版本，以改善用户体验。整体来看，该补丁得到了积极的反馈和支持，预计将对 ARM64 的虚拟化性能产生积极影响。
 
 #### 📝 邮件列表
 
@@ -213,21 +311,23 @@
 
 ---
 
-### Thread 4: [PATCH 0/3] arm64/sysreg: Introduce Feat descriptor and generated
+### Thread 6: [PATCH 0/3] arm64/sysreg: Introduce Feat descriptor and generated
  ICH_VMCR_EL2 support
 
 **📧 邮件数**: 7 | **👥 参与者**: 2 | **📅 开始时间**: Tue, 7 Oct 2025 15:35:13 +0000
 
 #### 🤖 AI 总结
 
-本邮件线程讨论了针对 ARM64 架构的系统寄存器（sysreg）描述框架的补丁，主要集中在引入特征描述符（Feat descriptor）以及生成 ICH_VMCR_EL2 寄存器的支持。补丁的第一部分引入了 Feat 描述符，使得系统寄存器的定义可以根据架构特征（如 GICv3 和 GICv5）进行变化。第二部分则添加了 ICH_VMCR_EL2 的生成描述，包括 GICv3 和 GICv5 的变体，确保寄存器定义的一致性并减少重复。最后，第三部分更新了 KVM vGIC-v3 实现，使用生成的 ICH_VMCR_EL2 定义，移除了手动定义，保持功能不变。
+本邮件讨论的主题是关于 ARM64 架构下系统寄存器的特性描述符和 ICH_VMCR_EL2 的支持。Sascha Bischoff 提出了三个补丁，旨在引入特性特定的字段编码，以支持不同架构特性的寄存器描述。
 
-关键技术要点包括：
-1. Feat 描述符的引入，允许根据架构特征生成不同的寄存器字段编码。
-2. ICH_VMCR_EL2 寄存器的生成描述，支持 GICv3 和 GICv5 的不同字段编码。
-3. 通过生成的定义替代手动编码，减少了代码重复并提高了可维护性。
+首先，补丁的内容包括：
+1. 第一个补丁引入了 Feat 描述符，使得系统寄存器的定义可以根据架构特性（如 GICv3 和 GICv5）变化。
+2. 第二个补丁为 ICH_VMCR_EL2 寄存器添加了描述，包括 GICv3 和 GICv5 的变体。
+3. 第三个补丁更新了 KVM vGIC-v3 实现，以使用生成的 ICH_VMCR_EL2 定义，移除了手动定义，确保功能一致性。
 
-讨论的结论是，当前的实现虽然解决了特征变化的问题，但对于未来可能出现的更复杂的寄存器布局变化（如嵌套特征）仍需进一步考虑和设计。此外，参与者对 Feat 描述符的命名提出了不同意见，认为可能需要更通用的名称。整体来看，补丁为未来的 ARM64 架构扩展奠定了基础，但仍需关注潜在的复杂性和可扩展性问题。
+在之前的讨论中，参与者们探讨了如何处理系统寄存器字段布局的变化，尤其是与架构特性无关的情况。Mark Brown 提出了一些建议，认为可能需要更通用的命名和结构，以便在未来支持嵌套特性。
+
+本周的新进展中，Sascha 对补丁进行了进一步的阐释，强调了 Feat 描述符的灵活性，并表示将考虑参与者的建议以改进补丁的实现。讨论中还提到，未来可能需要处理更复杂的寄存器定义情况，但当前补丁的实现是一个合理的简化。整体来看，讨论围绕如何有效地描述和管理 ARM64 系统寄存器的特性展开，旨在提高代码的可维护性和可扩展性。
 
 #### 📝 邮件列表
 
@@ -254,20 +354,20 @@
 
 ---
 
-### Thread 5: [PATCH v2 1/4] arm64/sysreg: Fix checks for incomplete sysreg
+### Thread 7: [PATCH v2 1/4] arm64/sysreg: Fix checks for incomplete sysreg
  definitions
 
 **📧 邮件数**: 5 | **👥 参与者**: 1 | **📅 开始时间**: Thu, 9 Oct 2025 16:54:47 +0000
 
 #### 🤖 AI 总结
 
-本邮件线程主要讨论了针对 ARM64 架构的系统寄存器（sysreg）定义的补丁，重点在于修复不完整的 sysreg 定义检查及引入条件字段编码的支持。
+本邮件线程讨论了针对 ARM64 系统寄存器的几个补丁，主要集中在修复和增强系统寄存器的定义。
 
-首先，Sascha Bischoff 提出了一个补丁，修正了检查不完整 sysreg 定义的逻辑。原先的检查条件为 `next_bit > 0`，这在某些情况下会漏掉未定义位 0 的情况，现已更改为 `next_bit >= 0`。此外，补丁还将 `next_bit` 的初始值设置为 -1，以确保与新检查条件一致。
+1. **原始补丁内容**：第一个补丁（PATCH v2 1/4）修复了对不完整系统寄存器定义的检查，之前的检查条件为 `next_bit > 0`，这在某些情况下会遗漏未定义的第0位。修正后改为 `next_bit >= 0`，并将 `next_bit` 的初始值设置为 -1，以确保正确处理所有位。
 
-接下来的补丁引入了前缀描述符（Prefix），允许在 sysreg 定义中使用条件字段编码。这一机制使得可以为不同的架构特性生成不同的字段编码，而不影响现有的定义。补丁中还添加了 ICH_VMCR_EL2 寄存器的生成定义，涵盖 GICv3 和 GICv5 的变体。
+2. **之前讨论要点**：在之前的讨论中，补丁的必要性得到了确认，尤其是在没有未定义位的情况下，确保生成的系统寄存器定义的完整性是至关重要的。
 
-讨论的主要结论是，补丁成功地修复了 sysreg 定义的检查问题，并为未来的寄存器布局提供了必要的基础设施。当前没有发现功能性变化，但仍需关注在不同上下文中使用条件字段编码的实现细节。整体上，这些改动为 ARM64 的虚拟化支持奠定了更为坚实的基础。
+3. **本周的新讨论与进展**：本周的讨论中，Sascha Bischoff 提出了另外三个补丁，分别引入了前缀描述符以支持特定功能的字段编码（PATCH v2 2/4），添加了 ICH_VMCR_EL2 寄存器（PATCH v2 3/4），并更新了 KVM 的 VGIC-v3 实现以使用生成的 ICH_VMCR_EL2 定义（PATCH v2 4/4）。这些补丁将增强系统寄存器的灵活性和可扩展性，同时确保与现有代码的兼容性。整体上，这些补丁的实施将为即将到来的 GICv5 KVM 支持奠定基础。
 
 #### 📝 邮件列表
 
@@ -288,47 +388,80 @@
 
 ---
 
-### Thread 6: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
- selftests runner
+### Thread 8: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the RMM
 
-**📧 邮件数**: 3 | **👥 参与者**: 3 | **📅 开始时间**: Fri, 10 Oct 2025 09:58:46 +0000
+**📧 邮件数**: 5 | **👥 参与者**: 3 | **📅 开始时间**: Wed, 01 Oct 2025 11:05:00 +0100
 
 #### 🤖 AI 总结
 
-本邮件线程主要讨论了针对 KVM 的自测试工具的补丁内容，特别是提供 README.rst 文件以帮助用户理解 KVM 自测试的运行机制。参与者探讨了该工具与现有 kselftest 基础设施的关系，以及其对 KVM 社区的潜在影响。
+本邮件讨论的主题是关于 ARM64 架构下的 RME（Realm Management Extensions）中添加 SMC（Secure Monitor Call）定义以调用 RMM（Realm Management Monitor）的补丁（PATCH v10 03/43）。该补丁旨在为 RMM 提供必要的接口，以便更好地管理虚拟化环境中的中断控制。
 
-关键技术要点包括：该自测试工具旨在提高测试的稳定性和可维护性，避免不同子系统之间的相互干扰。尽管该工具的实现不依赖于 KVM，但其设计目标是满足 KVM 的特定需求。每个 KVM 自测试都应能够并行运行，且测试的执行是独立的，允许用户根据主机资源动态调整测试参数。
+在历史讨论中，参与者们主要探讨了 RMM 对 KVM（Kernel-based Virtual Machine）中断管理的影响。Marc Zyngier 和 Steven Price 之间的争论集中在 RMM 是否应限制 KVM 使用某些控制位（如 TALL0、TALL1 和 TC 位）以及 RMM 对中断注入的控制权。Steven Price 认为 RMM 并不应干预 KVM 的中断管理，而 Marc Zyngier 则强调 RMM 需要对陷阱行为进行控制，以保护自身。
 
-讨论的主要结论是，该自测试工具是可选的，用户可以选择使用或不使用，使用该工具将提供更好的测试覆盖率和信心。此外，参与者同意需要在文档中进一步阐明该工具与 kselftest 基础设施的比较，以帮助用户更好地理解其功能和优势。待解决的问题包括如何确保 KVM 自测试与现有的 kselftest 结构兼容，以及如何进一步完善文档以便于用户使用。
+在本周的新讨论中，Suzuki K Poulose 提出了对当前 RMM 设计的看法，指出目前对主机管理 VGIC（Virtual Generic Interrupt Controller）的控制可能过于保守。他建议如果现有控制不足以满足需求，可以将反馈传递给 RMM 规范，以便在未来版本中进行扩展。Suzuki 还提到，新的陷阱可能会被报告为“sysreg”访问，与已暴露的 ICC_DIR 和 ICC_SGIxR 类似。
+
+总体来看，讨论围绕 RMM 的设计和 KVM 的中断管理展开，强调了未来可能的规范改进方向。
 
 #### 📝 邮件列表
 
-1. **[10-10 09:58]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
- selftests runner
-   - 发件人: Brendan Jackman <jackmanb@google.com>
-2. **[10-10 11:14]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
- selftests runner
-   - 发件人: Sean Christopherson <seanjc@google.com>
-3. **[10-10 12:38]** Re: [PATCH v3 9/9] KVM: selftests: Provide README.rst for KVM
- selftests runner
-   - 发件人: Vipin Sharma <vipinsh@google.com>
+1. **[10-01 11:05]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the RMM
+   - 发件人: Marc Zyngier <maz@kernel.org>
+2. **[10-01 12:00]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+   - 发件人: Steven Price <steven.price@arm.com>
+3. **[10-01 12:58]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the RMM
+   - 发件人: Marc Zyngier <maz@kernel.org>
+4. **[10-01 15:05]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+   - 发件人: Steven Price <steven.price@arm.com>
+5. **[10-08 09:46]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
+ RMM
+   - 发件人: Suzuki K Poulose <suzuki.poulose@arm.com>
 
 ---
 
-### Thread 7: [PATCH v2 0/2] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in headers
+### Thread 9: [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+
+**📧 邮件数**: 4 | **👥 参与者**: 3 | **📅 开始时间**: Fri,  3 Oct 2025 19:39:17 +0100
+
+#### 🤖 AI 总结
+
+本邮件讨论的主题是针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的一个补丁，旨在修复 FPSIMD（Floating Point SIMD）寄存器保存序列中的软中断屏蔽问题。
+
+1. **原始补丁内容**：补丁标题为“Fix softirq masking in FPSIMD register saving sequence”，其目的是解决由于错误回溯导致的内核 BUG。之前的补丁确保在 FPSIMD 寄存器保存操作中禁用和启用软中断，但此修复可能导致死锁问题。
+
+2. **之前讨论要点**：在历史讨论中，Will Deacon 提到，虽然之前的修复解决了内核 BUG，但在重新启用软中断时，可能会导致待处理的软中断在持有锁的情况下被处理，从而引发死锁。
+
+3. **本周的新讨论和进展**：在本周的讨论中，Greg KH 确认补丁已被添加到 5.15-stable 树中，并感谢参与者的贡献。补丁的具体文件名为 `kvm-arm64-fix-softirq-masking-in-fpsimd-register-saving-sequence.patch`，并在稳定队列中可找到。
+
+总的来说，本周的讨论确认了补丁的合并，并强调了其对系统稳定性的重要性。
+
+#### 📝 邮件列表
+
+1. **[10-03 19:39]** [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+   - 发件人: Will Deacon <will@kernel.org>
+2. **[10-03 19:43]** Re: [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in
+ FPSIMD register saving sequence
+   - 发件人: Will Deacon <will@kernel.org>
+3. **[10-06 12:00]** Re: [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in
+ FPSIMD register saving sequence
+   - 发件人: Greg KH <gregkh@linuxfoundation.org>
+4. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 5.15-stable tree
+   - 发件人: gregkh <gregkh@linuxfoundation.org>
+
+---
+
+### Thread 10: [PATCH v2 0/2] arm64: Replace __ASSEMBLY__ with __ASSEMBLER__ in headers
 
 **📧 邮件数**: 3 | **👥 参与者**: 1 | **📅 开始时间**: Fri, 10 Oct 2025 15:01:14 +0200
 
 #### 🤖 AI 总结
 
-本邮件线程主要讨论了对 ARM64 架构头文件中宏定义的修改，具体是将 `__ASSEMBLY__` 替换为 `__ASSEMBLER__`。这一变更旨在消除在用户空间和内核空间代码之间切换时可能引起的混淆，因为 `__ASSEMBLY__` 仅在内核的 Makefile 中定义，而 `__ASSEMBLER__` 是 GCC 和 Clang 编译器在编译汇编代码时自动定义的。
+本邮件讨论的主题是关于对 ARM64 架构头文件中宏定义的更改，具体是将 `__ASSEMBLY__` 替换为 `__ASSEMBLER__`。这个补丁的目的是为了统一使用由编译器自动定义的宏，减少在用户空间和内核空间代码之间切换时可能产生的混淆。
 
-关键技术要点包括：
-1. 统一使用 `__ASSEMBLER__`，以提高代码的可读性和一致性。
-2. 该补丁系列分为两个部分，分别针对用户空间 API（uapi）和非用户空间头文件进行修改。
-3. 此前对其他架构（如 x86、parisc 等）的类似修改已成功合并，且未收到用户空间问题的反馈。
+在历史讨论中，相关的清理补丁已经针对多个架构（如 x86、parisc 等）合并到内核中，且没有收到用户空间出现问题的反馈。这为 ARM64 的补丁提供了良好的背景。
 
-讨论的结论是，建议通过 ARM64 架构树合并这些补丁，以确保代码的一致性和减少潜在的混淆。待解决的问题主要是确认这些更改不会对用户空间造成负面影响。
+本周的新讨论中，开发者 Thomas Huth 提出了两个补丁：第一个补丁针对用户空间 API（uapi）头文件，第二个补丁针对非用户空间头文件。Huth 解释了使用 `__ASSEMBLER__` 的必要性，并指出这项更改是机械性的，主要是通过简单的文本替换完成的。他请求将这些补丁合并到 ARM64 的代码库中，以确保一致性并减少未来的混淆。
 
 #### 📝 邮件列表
 
@@ -341,19 +474,53 @@
 
 ---
 
-### Thread 8: [PATCH] KVM: arm64: selftests: Actually enable IRQs in vgic_lpi_stress
+### Thread 11: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
+ MSRs for mediated vPMUs
+
+**📧 邮件数**: 3 | **👥 参与者**: 3 | **📅 开始时间**: Fri, 26 Sep 2025 12:42:50 +0530
+
+#### 🤖 AI 总结
+
+本邮件线程讨论了一个关于 KVM（内核虚拟机）的补丁，主题为“禁用对某些 PMU（性能监控单元）MSR（模型特定寄存器）的拦截”，主要涉及虚拟化环境中如何处理性能计数器的拦截问题。
+
+**原始补丁内容**：该补丁旨在针对受控的虚拟 PMU 禁用对特定 PMU MSR 的拦截，以优化 AMD 处理器在缺少全局 MSR 的情况下的性能计数器使用。
+
+**之前讨论要点**：在历史讨论中，参与者探讨了 AMD 和 Intel 处理器在性能计数器拦截方面的不同情况。Sean Christopherson 指出，在某些情况下，尽管缺少全局控制，AMD 客户端仍然可以使用与主机相同数量的计数器，因此不需要对 RDPMC（读取性能监控计数器）进行拦截。
+
+**本周新讨论**：在本周的讨论中，Dapeng Mi 提出了对函数命名的建议，认为 `kvm_need_pmc_intercept()` 的名称可能会误导用户，建议将其重命名为 `kvm_need_global_intercept()`，以更准确地反映其功能。其他方面的代码看起来没有问题。
+
+总体而言，讨论集中在如何改进 KVM 的性能监控功能及其代码可读性上。
+
+#### 📝 邮件列表
+
+1. **[09-26 12:42]** Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
+ MSRs for mediated vPMUs
+   - 发件人: Sandipan Das <sandidas@amd.com>
+2. **[10-01 11:14]** Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
+ MSRs for mediated vPMUs
+   - 发件人: Sean Christopherson <seanjc@google.com>
+3. **[10-09 10:19]** Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
+ MSRs for mediated vPMUs
+   - 发件人: Mi, Dapeng <dapeng1.mi@linux.intel.com>
+
+---
+
+### Thread 12: [PATCH] KVM: arm64: selftests: Actually enable IRQs in vgic_lpi_stress
 
 **📧 邮件数**: 2 | **👥 参与者**: 2 | **📅 开始时间**: Tue,  7 Oct 2025 12:52:55 -0700
 
 #### 🤖 AI 总结
 
-本邮件线程讨论了一个针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试补丁，主要内容是修复 vgic_lpi_stress 测试中 IRQ（中断请求）未启用的问题。参与者 Oliver Upton 提出，该测试在执行期间意外地将 IRQ 保持为禁用状态，尽管 ITS（中断转发器）对 MSI（消息信号中断）的转换依然进行。为确保完整性，补丁建议在测试中启用 LPIs（本地中断）。
+本邮件线程讨论了一个针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试补丁，主题为“实际启用 vgic_lpi_stress 中的 IRQs”。
 
-关键技术要点包括：
-1. 在 vgic_lpi_stress 测试中添加了 `local_irq_enable()` 函数调用，以启用 IRQ。
-2. 该修改有助于确保测试的准确性和完整性，使得虚拟机能够正确处理 LPIs。
+**原始 patch/问题的内容**：
+补丁由 Oliver Upton 提出，目的是在 vgic_lpi_stress 测试中启用中断请求（IRQs）。之前的实现中，测试期间 IRQs 被禁用，这导致测试的完整性受到影响。补丁通过在 `guest_code` 函数中添加 `local_irq_enable()` 来解决这一问题。
 
-讨论的结论是，补丁得到了 Zenghui Yu 的审核和确认，表明该修改是合理的并且可以被接受。没有提出其他待解决的问题，表明该补丁将顺利合并。
+**之前讨论要点**：
+由于本线程没有历史讨论部分，之前的讨论要点不适用。
+
+**本周的新讨论、进展或结论**：
+在本周的讨论中，Oliver Upton 提交了补丁，并解释了其必要性。随后，参与者 Zenghui Yu 对补丁进行了审核并表示支持，确认了补丁的有效性。这表明补丁得到了认可，可能会在后续的版本中合并。整体来看，本周的讨论集中在补丁的提交和审核上，推动了 KVM arm64 自测试的改进。
 
 #### 📝 邮件列表
 
@@ -365,19 +532,94 @@
 
 ---
 
-### Thread 9: [PATCH] KVM: arm64: selftests: Sync ID_AA64PFR1, MPIDR, CLIDR in guest
+### Thread 13: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+
+**📧 邮件数**: 2 | **👥 参与者**: 2 | **📅 开始时间**: Fri, 3 Oct 2025 18:23:57 +0100
+
+#### 🤖 AI 总结
+
+本邮件线程讨论了一个关于 KVM 的补丁，主题为“添加 KVM_CREATE_GUEST_MEMFD ioctl() 以支持特定于来宾的后备内存”。该补丁旨在改进 KVM 的内存管理，允许为虚拟机提供更灵活的内存后备选项。
+
+在历史讨论中，Nikita Kalyazin 提出了一个问题，询问是否仍然需要对来宾内存的某些限制进行保留，特别是在主机可以访问来宾内存的情况下。他提到，解除这些限制将有助于支持基于脏页跟踪的差异内存快照功能，尤其是在 Firecracker 和实时迁移中。他通过实验验证，移除检查后成功生成了差异快照并恢复了 Firecracker 虚拟机。
+
+在本周的新讨论中，Sean Christopherson 对于使用 guest_memfd 进行脏日志记录的可行性表示乐观。他认为，虽然可能需要在用户空间中明确列出支持情况，并且 KVM 中可能存在一些假设，但从根本上讲，这种功能应该可以正常工作。这表明讨论正在朝着实现该补丁的方向推进，且参与者对其潜在的应用场景持积极态度。
+
+#### 📝 邮件列表
+
+1. **[10-03 18:23]** Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+   - 发件人: Nikita Kalyazin <kalyazin@amazon.com>
+2. **[10-07 06:58]** Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
+ guest-specific backing memory
+   - 发件人: Sean Christopherson <seanjc@google.com>
+
+---
+
+### Thread 14: [STABLE 6.6.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+
+**📧 邮件数**: 2 | **👥 参与者**: 2 | **📅 开始时间**: Fri,  3 Oct 2025 19:40:54 +0100
+
+#### 🤖 AI 总结
+
+本邮件讨论的主题是针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的一个补丁，旨在修复 FPSIMD（Floating Point SIMD）寄存器保存序列中的软中断屏蔽问题。
+
+**原始补丁内容**：历史讨论中提到的补丁（提交 ID：28b82be094e2）修复了由于错误回溯导致的内核 BUG。该补丁确保在 FPSIMD 寄存器保存操作期间禁用和启用软中断。然而，这一修复引入了新的问题，即在重新启用软中断时可能导致死锁。
+
+**之前讨论要点**：讨论指出，虽然原始问题得以解决，但在处理挂起的软中断时可能会与已持有的锁发生冲突，从而导致死锁现象。
+
+**本周新讨论**：在本周的更新中，Greg Kroah-Hartman 通知大家，该补丁已被添加到 6.6 稳定树中，文件名为 `kvm-arm64-fix-softirq-masking-in-fpsimd-register-saving-sequence.patch`。他还邀请任何人对该补丁的稳定性提出意见，确保其适合加入稳定版本。
+
+总体来看，补丁的添加标志着对 KVM arm64 的重要修复进展，尽管仍需关注可能的死锁问题。
+
+#### 📝 邮件列表
+
+1. **[10-03 19:40]** [STABLE 6.6.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+   - 发件人: Will Deacon <will@kernel.org>
+2. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.6-stable tree
+   - 发件人: gregkh <gregkh@linuxfoundation.org>
+
+---
+
+### Thread 15: [STABLE 6.1.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+
+**📧 邮件数**: 2 | **👥 参与者**: 2 | **📅 开始时间**: Fri,  3 Oct 2025 19:40:18 +0100
+
+#### 🤖 AI 总结
+
+本邮件讨论的主题是关于修复 KVM（Kernel-based Virtual Machine）在 arm64 架构中处理 FPSIMD（Floating Point SIMD）寄存器保存时的软中断掩蔽问题。
+
+1. **原始 patch/问题内容**：
+   历史讨论中提到的补丁标题为“Fix softirq masking in FPSIMD register saving sequence”。该补丁旨在解决由于错误回溯导致的内核 BUG，确保在 FPSIMD 寄存器保存操作中正确禁用和启用软中断。然而，这一修复可能引发死锁，因为重新启用软中断时会处理待处理的软中断，而此时可能已经持有锁。
+
+2. **之前讨论要点**：
+   在历史邮件中，Will Deacon 提到原始补丁虽然修复了内核 BUG，但引入了新的问题，即在处理软中断时可能导致的锁竞争和死锁情况。为此，补丁尝试通过禁用硬中断来进一步解决这一问题。
+
+3. **本周的新讨论、进展或结论**：
+   在本周的讨论中，Greg Kroah-Hartman 通知大家，该补丁已被添加到 6.1-stable 树中，表明这一修复已正式纳入稳定版本。邮件中提供了补丁的具体路径，鼓励任何对此补丁有异议的人联系稳定邮件列表。
+
+综上所述，本次讨论围绕修复 KVM 在 arm64 架构下的软中断处理问题展开，经过讨论后，相关补丁已成功合并至稳定版本。
+
+#### 📝 邮件列表
+
+1. **[10-03 19:40]** [STABLE 6.1.y] [PATCH] KVM: arm64: Fix softirq masking in FPSIMD register saving sequence
+   - 发件人: Will Deacon <will@kernel.org>
+2. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.1-stable tree
+   - 发件人: gregkh <gregkh@linuxfoundation.org>
+
+---
+
+### Thread 16: [PATCH] KVM: arm64: selftests: Sync ID_AA64PFR1, MPIDR, CLIDR in guest
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Sun, 12 Oct 2025 23:43:52 +0800
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是关于在 KVM（Kernel-based Virtual Machine）环境下，ARM64 架构的自测试中未同步特定寄存器（ID_AA64PFR1、MPIDR 和 CLIDR）的问题。参与者 Zenghui Yu 提出需要将这些寄存器添加到同步列表中，以确保虚拟机（guest）能够正确读取到已写入的值。
+本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试（selftests）中，针对某些寄存器的同步问题。Zenghui Yu 提出了一个补丁（patch），目的是在虚拟机（guest）中同步 ID_AA64PFR1、MPIDR 和 CLIDR 这几个寄存器，以确保虚拟机能够正确读取到写入的值。
 
-关键技术要点包括：
-1. 在 ARM64 架构的 KVM 自测试中，确保所有相关寄存器的值能够被虚拟机正确识别是至关重要的。
-2. 通过在代码中添加对 ID_AA64PFR1、MPIDR 和 CLIDR 寄存器的同步，可以提升测试的准确性和可靠性。
+在本周的新讨论中，Zenghui Yu 提到之前在实现中遗漏了这几个寄存器的同步，因此在补丁中添加了对它们的同步处理。补丁的具体修改包括在 `set_id_regs.c` 文件中增加了对 SYS_ID_AA64PFR1_EL1、SYS_MPIDR_EL1 和 SYS_CLIDR_EL1 的同步调用。
 
-讨论的结论是，补丁已被提交以修复这一问题，确保在 KVM 的 ARM64 自测试中，所有必要的寄存器都能被正确同步。待解决的问题主要是确认此补丁是否能够有效解决之前的同步遗漏，并在后续测试中验证其效果。
+此次讨论没有涉及到历史讨论的内容，主要集中在补丁的具体实现及其必要性上。补丁的签名者为 Zenghui Yu，表明他对该修改的责任和认可。整体来看，本周的讨论强调了寄存器同步的重要性，以确保虚拟机的稳定性和正确性。
 
 #### 📝 邮件列表
 
@@ -386,38 +628,22 @@
 
 ---
 
-### Thread 10: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Sat, 11 Oct 2025 16:32:34 +0200
-
-#### 🤖 AI 总结
-
-在这封邮件中，讨论的主要技术问题是关于 KVM（内核虚拟机）中的 guest_memfd 功能，特别是如何优化 TLB（翻译后备缓冲区）刷新机制。参与者 Patrick Roy 和 David Hildenbrand 探讨了批量和延迟 TLB 刷新的选项，提出在达到一定页面分配数量时进行刷新，以提高性能。
-
-关键技术要点包括：1）建议在每分配 512 页时进行一次 TLB 刷新，同时设置一个时间限制（如每 5 秒）以确保即使在长时间没有分配的情况下也能进行刷新；2）Patrick 提到他对批量刷新进行了初步测试，发现其性能与完全不进行 TLB 刷新相比，差距在 30% 以内，但仍未达到实用水平。
-
-讨论的结论是，虽然批量刷新机制在性能上有所改善，但仍需进一步优化以达到可用标准。参与者们对这一方案的可行性表示关注，并期待更多的测试和反馈。
-
-#### 📝 邮件列表
-
-1. **[10-11 16:32]** Re: [PATCH v7 06/12] KVM: guest_memfd: add module param for disabling
- TLB flushing
-   - 发件人: Patrick Roy <patrick.roy@linux.dev>
-
----
-
-### Thread 11: [PATCH v2] KVM: arm64: Guard PMSCR_EL1 initialization with SPE presence check
+### Thread 17: [PATCH v2] KVM: arm64: Guard PMSCR_EL1 initialization with SPE presence check
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Fri, 10 Oct 2025 23:17:07 +0530
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是关于 KVM 在 arm64 架构下 PMSCR_EL1 初始化的安全性，特别是在 VHE 模式下的处理。Mukesh Ojha 提出了一个补丁，旨在通过检查 CPU 是否支持统计分析扩展（SPE）来避免在某些平台上系统启动时发生挂起的问题。该问题源于在未正确配置 SPE 的情况下，PMSCR_EL1 被初始化为 0，导致 EL3 没有将 Profiling Buffer 的访问权限委派给非安全世界。
+本邮件讨论的主题是关于 KVM 在 arm64 架构下的 PMSCR_EL1 初始化问题，特别是如何在存在统计分析扩展（SPE）的情况下进行适当的初始化。
 
-关键技术要点包括：1）引入了一个新的辅助函数 `cpu_has_spe()`，用于检查 CPU 是否支持 SPE 及其 Profiling Buffer 是否可用；2）在 PMSCR_EL1 初始化时，只有在确认 CPU 支持 SPE 的情况下才进行初始化，从而避免了潜在的启动失败。
+**原始 patch/问题的内容**：
+Mukesh Ojha 提出的补丁（PATCH v2）旨在修复之前的提交 efad60e46057，该提交在 VHE 模式下初始化 PMSCR_EL1 时未进行充分检查，导致在某些平台上系统启动时可能挂起。这是因为 EL3 没有将 Profiling Buffer 的访问权限委托给非安全世界，且未在系统寄存器陷阱时重新注入 UNDEF。
 
-讨论的结论是，通过这一补丁，可以有效防止在不支持 SPE 的平台上出现启动问题，确保系统的稳定性和可靠性。待解决的问题主要是确保所有相关平台都能正确识别和处理 SPE 的可用性。
+**之前讨论要点**：
+在历史讨论中，未提供具体的背景信息或先前讨论的要点。
+
+**本周的新讨论、进展或结论**：
+本周的讨论中，Mukesh Ojha 提出了新的补丁版本，增加了一个新的辅助函数 `cpu_has_spe()`，用于检查 CPU 是否支持 SPE 及其 Profiling Buffer 是否可在非安全 EL1 中访问。通过这种方式，PMSCR_EL1 的初始化将仅限于支持 SPE 的 CPU，从而避免在不正确配置 SPE 的平台上出现启动失败的问题。此外，补丁中还对提交日志进行了重新措辞，并重用了 host_data_set_flag() 和 host_data_test_flag() 函数。整体来看，此次补丁的更新旨在增强系统的稳定性和兼容性。
 
 #### 📝 邮件列表
 
@@ -426,20 +652,20 @@
 
 ---
 
-### Thread 12: [PATCH 2/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in
+### Thread 18: [PATCH 2/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in
  set_id_regs
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Fri, 10 Oct 2025 23:29:15 +0800
 
 #### 🤖 AI 总结
 
-在这封邮件中，讨论的主要技术问题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试，特别是如何在 `set_id_regs` 函数中覆盖 `ID_AA64ISAR3_EL1` 寄存器的相关补丁。参与者 Zenghui Yu 提到，除了当前补丁外，似乎还遗漏了几个寄存器（ID_AA64PFR1、MPIDR 和 CLIDR）的同步，这可能导致虚拟机未能正确读取已写入的值。
+本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试补丁，具体内容为「[PATCH 2/2] KVM: arm64: selftests: Cover ID_AA64ISAR3_EL1 in set_id_regs」。该补丁旨在确保在设置寄存器时覆盖 ID_AA64ISAR3_EL1 寄存器，以增强自测试的完整性。
 
-关键技术要点包括：
-1. 补丁的目标是增强 KVM 的自测试覆盖率，确保在设置 ID 寄存器时能够正确处理 `ID_AA64ISAR3_EL1`。
-2. 讨论中提到的寄存器同步问题可能影响虚拟机的运行状态，导致其无法正确反映主机的寄存器值。
+在历史讨论中，未发现相关的补丁或讨论记录，因此背景信息较为缺乏。
 
-主要讨论结论是，除了当前的补丁外，开发者需要关注并解决寄存器同步的问题，以确保虚拟机能够正确读取和使用寄存器值。这一问题的解决将有助于提升 KVM 的稳定性和可靠性。
+在本周的新讨论中，参与者 Zenghui Yu 提出了一个与当前补丁无关但重要的观察，指出在虚拟机（guest）中似乎遗漏了对几个寄存器（ID_AA64PFR1、MPIDR、CLIDR）的同步，这可能导致虚拟机未能正确接收到写入的值。这一发现强调了在虚拟化环境中维护寄存器一致性的重要性。
+
+总体来看，本周的讨论虽然没有直接针对补丁本身，但提出了潜在的改进建议，可能会影响未来的补丁开发和虚拟机的稳定性。
 
 #### 📝 邮件列表
 
@@ -449,61 +675,19 @@
 
 ---
 
-### Thread 13: [PATCH v3 1/9] KVM: selftest: Create KVM selftest runner
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Fri, 10 Oct 2025 09:47:04 +0000
-
-#### 🤖 AI 总结
-
-在这封邮件中，讨论的主要内容是关于 KVM 自测试框架的补丁，具体是创建 KVM 自测试运行器。邮件中只有一位参与者，Brendan Jackman，针对 Vipin Sharma 提出的补丁进行了简短的反馈，指出了一个拼写错误，即将 "exists" 更正为 "exist"。
-
-关键的技术要点包括：
-1. KVM（Kernel-based Virtual Machine）自测试框架的构建旨在提高虚拟化环境的测试效率和可靠性。
-2. 该补丁是一个系列补丁中的第一部分，表明这是一个较大的改进计划。
-
-讨论的结论是，虽然补丁的基本内容得到了认可，但在提交之前需要修正拼写错误。当前没有其他技术问题被提出，表明该补丁的整体方向是积极的。待解决的问题主要是确保补丁的文档和代码质量达到标准。
-
-#### 📝 邮件列表
-
-1. **[10-10 09:47]** Re: [PATCH v3 1/9] KVM: selftest: Create KVM selftest runner
-   - 发件人: Brendan Jackman <jackmanb@google.com>
-
----
-
-### Thread 14: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
- MSRs for mediated vPMUs
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Thu, 9 Oct 2025 10:19:41 +0800
-
-#### 🤖 AI 总结
-
-该邮件讨论的主要技术问题是关于 KVM（Kernel-based Virtual Machine）中针对虚拟化 PMU（Performance Monitoring Unit）相关的 MSR（Model-Specific Register）拦截功能的补丁。具体而言，补丁的目的是禁用对某些 PMU MSR 的拦截，以优化虚拟化性能。
-
-在讨论中，Sean Christopherson 提出了对函数命名的建议，认为当前的函数名 kvm_need_pmc_intercept() 可能会误导用户，使其认为该函数用于检查特定的 PMC 是否被拦截。他建议将函数重命名为 kvm_need_global_intercept()，以更准确地反映其功能。
-
-总体来看，讨论的结论是补丁的其他部分没有问题，但函数命名需要更改以避免混淆。待解决的问题是如何在不影响功能的前提下，进行合适的命名调整。
-
-#### 📝 邮件列表
-
-1. **[10-09 10:19]** Re: [PATCH v5 32/44] KVM: x86/pmu: Disable interception of select PMU
- MSRs for mediated vPMUs
-   - 发件人: Mi, Dapeng <dapeng1.mi@linux.intel.com>
-
----
-
-### Thread 15: [PATCH] KVM: arm64: selftests: Allocate vcpus with correct size
+### Thread 19: [PATCH] KVM: arm64: selftests: Allocate vcpus with correct size
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Wed,  8 Oct 2025 23:45:20 +0800
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试代码中，vcpus 数组的内存分配错误。参与者 Zenghui Yu 提出了一个补丁，修正了 vcpus 数组的分配方式，避免了使用过大的内存分配。
+本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试中，针对虚拟 CPU（vCPU）数组的内存分配进行修正的补丁（patch）。补丁由 Zenghui Yu 提出，主要目的是修正 vcpus 数组的内存分配方式，避免不必要的内存浪费。
 
-关键技术要点包括：
-1. 原始代码中，vcpus 数组被错误地分配为 `nr_cpus * sizeof(struct kvm_vcpu)`，这实际上是为每个虚拟 CPU 分配了过多的内存。
-2. 修正后的代码使用 `nr_cpus * sizeof(struct kvm_vcpu *)`，确保只为指针数组分配内存，从而优化了内存使用。
+在历史讨论中，没有提供具体的上下文或先前的讨论内容，因此我们无法得知该补丁的背景或之前的争议点。
 
-讨论的结论是，补丁有效地解决了内存分配问题，提升了代码的效率和准确性。当前没有提到其他待解决的问题，补丁已被提交以供进一步审查和应用。
+本周的新讨论中，Zenghui Yu 提出了具体的代码修改，指出原先的内存分配使用了 `nr_cpus * sizeof(struct kvm_vcpu)`，这是不必要的，因为 vcpus 数组实际上只需要存储指向 `struct kvm_vcpu` 的指针。因此，补丁将内存分配修改为 `nr_cpus * sizeof(struct kvm_vcpu *)`，以更合理地分配内存。补丁中还包含了对内存分配失败的测试断言，确保在分配失败时能够及时报告。
+
+总结而言，本周的讨论集中在对 vCPU 数组内存分配的修正上，提出了更为高效的解决方案，提升了代码的合理性和性能。
 
 #### 📝 邮件列表
 
@@ -512,39 +696,18 @@
 
 ---
 
-### Thread 16: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
- RMM
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Wed, 8 Oct 2025 09:46:16 +0100
-
-#### 🤖 AI 总结
-
-本邮件讨论的主要技术问题是关于 ARM64 架构下的 RME（Realm Management Extensions）中，如何为调用 RMM（Realm Management Monitor）添加 SMC（Secure Monitor Call）定义。参与者 Suzuki K Poulose 和 Steven Price 讨论了 RMM 设计的保守性，指出当前对主机管理 VGIC（Virtual Generic Interrupt Controller）的控制权限可能不足。
-
-关键技术要点包括：RMM 设计旨在简化管理，尽量减少对主机的控制暴露，但这可能限制了主机对 Realm VGIC 的有效管理。Steven 提到，如果现有控制集不够，未来可以向 RMM 规范反馈以扩展控制功能。此外，新的陷阱将被报告为“sysreg”访问，与已暴露的 ICC_DIR 和 ICC_SGIxR 类似。
-
-讨论的结论是，当前的控制集可能需要改进，以便主机能够更好地管理 Realm VGIC，未来的版本可能会考虑这些反馈并进行相应的调整。待解决的问题是如何在不增加 RMM 复杂性的前提下，扩展主机的管理能力。
-
-#### 📝 邮件列表
-
-1. **[10-08 09:46]** Re: [PATCH v10 03/43] arm64: RME: Add SMC definitions for calling the
- RMM
-   - 发件人: Suzuki K Poulose <suzuki.poulose@arm.com>
-
----
-
-### Thread 17: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3
+### Thread 20: [PATCH] KVM: arm64: gic-v3: Only set ICH_HCR traps for v2-on-v3 or v3
  guests
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Tue, 7 Oct 2025 16:07:13 +0000
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是关于在 KVM（Kernel-based Virtual Machine）环境中，如何处理 GICv3（通用中断控制器版本3）硬件与不同版本的虚拟机（guest）之间的兼容性。具体来说，补丁内容涉及在 GICv3 硬件上，仅为 GICv2 或 GICv3 虚拟机设置 ICH_HCR（中断控制器硬件配置寄存器）陷阱。
+本邮件讨论的主题是关于 KVM（内核虚拟机）在 arm64 架构下对 GICv3（通用中断控制器版本3）的处理。Sascha Bischoff 提出的补丁旨在优化 ICH_HCR（中断控制器硬件配置寄存器）的陷阱设置，仅在兼容的虚拟机环境下进行配置。
 
-关键技术要点包括：在 GICv2 虚拟机运行于 GICv3 硬件时，需要确保虚拟机只能看到 GICv2 的相关部分，而不暴露 GICv3 的特性；对于 GICv3 虚拟机，则在特定场景下设置陷阱。补丁中提到，错误地更新联合体的状态可能导致状态损坏，因此需要谨慎处理。
+补丁的核心内容是：在运行 GICv3 硬件时，只有在运行 GICv2-on-v3 或 GICv3 的虚拟机时，才会设置 ICH_HCR 陷阱。对于 GICv2 原生虚拟机，这些陷阱是不适用的，因此需要避免错误配置，防止状态损坏。补丁通过在代码中添加条件判断，确保只有在合适的虚拟机环境下才会进行陷阱设置。
 
-讨论的结论是，若运行的虚拟机不兼容（如 GICv2 在 GICv3 硬件上），则应尽早返回，避免设置陷阱；若为 GICv2 虚拟机，则应无条件设置陷阱；否则，仅在 GICv3 原生虚拟机的情况下有条件地设置陷阱。待解决的问题主要是如何确保在不同硬件和虚拟机版本间的状态管理不出错。
+在本周的新讨论中，Sascha 详细解释了补丁的实现逻辑，强调了在不兼容的虚拟机环境下提前退出的必要性，以确保系统的稳定性和安全性。该补丁已被提交，并对相关代码进行了相应的修改。整体来看，本周的讨论集中在补丁的具体实现和潜在影响上，未涉及其他参与者的反馈或异议。
 
 #### 📝 邮件列表
 
@@ -554,69 +717,22 @@
 
 ---
 
-### Thread 18: [PATCH] Documentation: KVM: Update GICv3 docs for GICv5 hosts
+### Thread 21: [PATCH] Documentation: KVM: Update GICv3 docs for GICv5 hosts
 
 **📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Tue, 7 Oct 2025 15:48:54 +0000
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是关于更新 KVM（Kernel-based Virtual Machine）文档，以支持在 GICv5 主机上运行 GICv3 虚拟机。参与者 Sascha Bischoff 提出了一个补丁，更新了 GICv3 的文档，特别是针对 GICv5 主机的兼容性。
+本邮件主题为“[PATCH] Documentation: KVM: Update GICv3 docs for GICv5 hosts”，主要讨论了更新 KVM 文档以支持 GICv5 主机上运行 GICv3 虚拟机的相关内容。
 
-关键技术要点包括：GICv5 主机可以选择性地支持 FEAT_GCIE_LEGACY 特性，这使得它们能够在 GICv5 硬件上执行基于 GICv3 的虚拟机。文档中明确指出，创建 GICv3 虚拟设备需要一个 GICv3 主机，或者一个支持 FEAT_GCIE_LEGACY 的 GICv5 主机。
+在本周的新讨论中，Sascha Bischoff 提出了一个补丁，旨在更新 GICv3 的文档，以反映 GICv5 主机的兼容性。具体来说，GICv5 主机可选择支持 FEAT_GCIE_LEGACY 特性，从而允许其上运行基于 GICv3 的虚拟机。补丁中修改了文档，明确指出创建 GICv3 虚拟设备需要一个 GICv3 主机，或者一个支持 FEAT_GCIE_LEGACY 的 GICv5 主机。
 
-讨论的结论是，更新后的文档将更准确地反映当前 KVM 的功能，确保用户能够理解在不同硬件环境下创建虚拟机的要求。待解决的问题可能包括对 GICv5 主机的其他特性支持的进一步讨论，以及如何在实际使用中验证这些更新的有效性。
+本周的讨论没有涉及其他参与者的回复或异议，补丁内容清晰且直接，主要是对现有文档的必要更新，以确保用户了解在 GICv5 环境下的 GICv3 支持情况。
 
 #### 📝 邮件列表
 
 1. **[10-07 15:48]** [PATCH] Documentation: KVM: Update GICv3 docs for GICv5 hosts
    - 发件人: Sascha Bischoff <Sascha.Bischoff@arm.com>
-
----
-
-### Thread 19: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Tue, 7 Oct 2025 06:58:18 -0700
-
-#### 🤖 AI 总结
-
-本邮件讨论的主要技术问题是关于在 KVM 中添加 `KVM_CREATE_GUEST_MEMFD` ioctl() 的补丁，以支持特定于虚拟机的后备内存。参与者 Sean Christopherson 和 Nikita Kalyazin 讨论了该补丁的潜在影响，特别是与非 CoCo 虚拟机的脏页日志功能的兼容性。
-
-关键技术要点包括：
-1. 该补丁旨在通过 `guest_memfd` 提供对虚拟机特定内存的支持。
-2. 参与者认为，脏页日志记录功能应该能够与 `guest_memfd` 一起正常工作，尽管可能需要在用户空间中明确列出支持情况。
-3. 讨论中提到 KVM 中可能存在一些假设，这可能会影响补丁的实施。
-
-主要讨论结论是，尽管在实现过程中可能会遇到一些假设和兼容性问题，但从理论上讲，该补丁应该能够顺利运行。待解决的问题包括如何在用户空间中明确支持情况，以及确保 KVM 的假设不会影响新功能的正常工作。
-
-#### 📝 邮件列表
-
-1. **[10-07 06:58]** Re: [PATCH 15/34] KVM: Add KVM_CREATE_GUEST_MEMFD ioctl() for
- guest-specific backing memory
-   - 发件人: Sean Christopherson <seanjc@google.com>
-
----
-
-### Thread 20: [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in
- FPSIMD register saving sequence
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Mon, 6 Oct 2025 12:00:02 +0200
-
-#### 🤖 AI 总结
-
-本邮件讨论的主题是针对 Linux 内核稳定版本 5.15.y 的一个补丁，主要内容是修复 KVM（Kernel-based Virtual Machine）在 arm64 架构中处理 FPSIMD（Floating Point SIMD）寄存器保存序列时的软中断屏蔽问题。参与者 Will Deacon 提到该补丁已成功提交至稳定邮件列表，并表示感谢。
-
-关键技术要点包括：
-1. 该补丁旨在解决在虚拟化环境中，FPSIMD 寄存器保存时可能导致的软中断处理不当的问题。
-2. 修复措施有助于提高 KVM 在 arm64 平台上的稳定性和性能，确保虚拟机在执行浮点和 SIMD 操作时的正确性。
-
-讨论的结论是，补丁已被接受并排队处理，表明该问题得到了认可并将会在后续版本中得到解决。当前没有提出其他待解决的问题，表明该补丁的实施过程相对顺利。
-
-#### 📝 邮件列表
-
-1. **[10-06 12:00]** Re: [STABLE 5.15.y] [PATCH] KVM: arm64: Fix softirq masking in
- FPSIMD register saving sequence
-   - 发件人: Greg KH <gregkh@linuxfoundation.org>
 
 ---
 
@@ -633,11 +749,13 @@
 
 #### 🤖 AI 总结
 
-本邮件讨论的主要技术问题是关于在 KVM（内核虚拟机）中为 ARM64 架构注册主机 TSM（可信安全模块）平台设备的补丁。参与者们围绕如何处理虚拟设备与真实硬件之间的关系展开了深入讨论。
+本邮件线程讨论了一个关于 KVM（内核虚拟机）在 ARM64 架构上注册主机 TSM（可信安全模块）平台设备的 RFC 补丁（patch）。该补丁的目的是为了在没有加载 TSM 驱动的情况下，让 CCA（保密计算架构）客人能够识别其运行环境。
 
-关键技术要点包括：1）讨论了“faux”设备的定义及其用途，强调其不应与真实硬件绑定；2）提到平台固件提供的 ARM SMC 接口作为操作系统与 ARM 固件之间的通用函数调用多路复用器；3）Jason Gunthorpe 指出，当前的实现可能会影响 systemd 对机密虚拟机的检测，因为它依赖于一个软件创建的平台设备。
+在之前的讨论中，参与者们探讨了补丁的设计意图以及当前代码的缺陷，指出缺少必要的设备 ID 和匹配逻辑，导致虚拟设备无法正常工作。Greg KH 强调，使用虚拟设备的方式并不合适，应该使用真实硬件驱动。
 
-讨论的主要结论是，参与者一致认为不应滥用平台设备来创建虚拟设备，建议应基于实际的硬件能力或接口来触发设备的注册。同时，建议未来应定义更明确的 sysfs 接口，以便更好地处理机密计算环境的检测问题。待解决的问题包括如何确保 systemd 能够准确区分主机和客人侧的 TSM 设备，以及如何优化现有的检测逻辑，以避免未来的兼容性问题。
+本周的新讨论中，Jeremy Linton 和 Jason Gunthorpe 等人继续探讨了虚拟设备的使用问题，认为系统不应依赖于软件创建的虚拟平台设备来进行保密虚拟机的检测。Jason 提出，应该为系统提供一个更明确的 API，以避免滥用平台设备。最后，Dan Williams 提到，现有的 TSM 驱动已经提供了一种跨架构的报告机制，并建议在类设备中添加简单属性，以帮助系统区分主机和客机的 TSM。
+
+总体来看，讨论集中在如何合理地实现和使用 KVM 的 TSM 设备，确保系统的可靠性和可维护性。
 
 #### 📝 邮件列表
 
@@ -681,13 +799,13 @@
 
 #### 🤖 AI 总结
 
-在这封邮件中，Aneesh Kumar K.V. 讨论了在切换到 faux_device 模型后，如何根据设备分配特性自动加载客机和主机 TSM 驱动程序的问题。之前，平台设备提供了一种清晰的抽象，使得自动加载变得简单直接。然而，当前的模型在这一点上遇到了困难。
+本邮件讨论的主题是关于 KVM 在 arm64 架构下的 CCA（Cache Coherent Accelerator）相关补丁，具体是注册主机 TSM（Transaction Synchronization Mechanism）平台设备的 RFC（请求反馈补丁）版本。
 
-关键技术要点包括：
-1. faux_device 模型的引入对自动加载驱动程序的影响。
-2. 设备分配特性与驱动程序加载之间的关系。
+在历史讨论中，补丁的主要目的是改善 KVM 对 TSM 驱动的管理，尤其是在设备分配功能可用时，自动加载相应的主机和来宾 TSM 驱动。之前的讨论指出，平台设备提供了一种清晰的抽象，简化了这一自动加载过程。
 
-讨论的结论是，当前的实现方式在自动加载驱动程序方面存在问题，需要进一步探讨如何改进这一机制，以恢复之前平台设备所提供的便利性。待解决的问题是如何在新的模型下实现有效的驱动程序自动加载。
+在本周的新讨论中，参与者 Aneesh Kumar K.V 提出了在切换到 faux_device 模型后遇到的问题，即如何根据设备分配功能的可用性自动加载来宾和主机 TSM 驱动。他强调，之前的平台设备模型使得这一过程变得简单明了，但在新的模型下，这一功能的实现变得复杂。
+
+总结来看，本周的讨论集中在如何在新的设备模型下保持驱动的自动加载功能，反映了对补丁实施后可能出现问题的关注。
 
 #### 📝 邮件列表
 
@@ -705,22 +823,22 @@
 
 ### Thread 1: Saving and restoring state of a KVM VM using GICv2 fails
 
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Fri, 10 Oct 2025 16:33:45 +0100
+**📧 邮件数**: 2 | **👥 参与者**: 2 | **📅 开始时间**: Fri, 10 Oct 2025 16:33:45 +0100
 
 #### 🤖 AI 总结
 
-在这封邮件中，参与者Peter Maydell讨论了在使用GICv2的KVM虚拟机中保存和恢复状态时遇到的问题。他发现，虽然虚拟机的运行和状态保存正常，但在尝试重新加载状态时失败，具体错误信息涉及无法设置某个寄存器的值。问题的根源在于，内核在处理寄存器时只清除了GIC字段，而在状态保存时，虚拟机已经运行过，因此保存的状态数据中GIC字段为0。但在加载状态时，新的虚拟机尚未运行，内核仍认为GIC字段应为1，导致SET_ONE_REG操作失败。
+本邮件讨论的主题是关于在使用 GICv2 的 KVM 虚拟机中保存和恢复状态时出现的问题。参与者 Peter Maydell 发现，在尝试恢复虚拟机状态时，系统无法正确设置某些寄存器，导致加载失败。具体来说，KVM 在保存状态时只清除了寄存器中的 GIC 字段，而在加载状态时，虚拟机是全新的，KVM 仍然认为 GIC 字段应为 1，因此导致了寄存器设置失败。
 
-关键技术要点包括：
-1. KVM在处理寄存器时对GIC字段的管理不一致。
-2. 状态保存和恢复操作在寄存器值处理上存在差异，导致加载失败。
+在本周的讨论中，Marc Zyngier 确认了这一问题在上游代码中也存在，并指出需要进行几项更改以解决此问题，包括允许写入 ID_PFR1_EL1.GIC，并在创建内核中的 GIC 时管理相关寄存器。此外，他提到需要保留“最终化”处理，以应对没有内核 GIC 的情况。Marc 表示将很快发布修复补丁。
 
-讨论的结论是，当前的实现存在问题，需要进一步调查是否在仅支持64位EL1的主机上也会出现类似情况。此外，可能需要对ID_AA64PFR0_EL1.GIC的写入权限进行调整，以解决此类问题。
+总结来说，当前的问题是 GICv2 虚拟机在状态恢复时寄存器不一致，讨论中提出了修复方案，并计划尽快实施。
 
 #### 📝 邮件列表
 
 1. **[10-10 16:33]** Saving and restoring state of a KVM VM using GICv2 fails
    - 发件人: Peter Maydell <peter.maydell@linaro.org>
+2. **[10-12 18:14]** Re: Saving and restoring state of a KVM VM using GICv2 fails
+   - 发件人: Marc Zyngier <maz@kernel.org>
 
 ---
 
@@ -732,46 +850,58 @@
 
 ### Thread 1: KVM NV + SVE host OS warning
 
-**📧 邮件数**: 13 | **👥 参与者**: 3 | **📅 开始时间**: Tue, 7 Oct 2025 11:12:31 +0000
+**📧 邮件数**: 17 | **👥 参与者**: 3 | **📅 开始时间**: Thu, 25 Sep 2025 15:38:14 +0100
 
 #### 🤖 AI 总结
 
-在这次邮件讨论中，主要关注的问题是KVM（Kernel-based Virtual Machine）在处理支持SVE（Scalable Vector Extension）和NV（Non-virtualized）情况下的主机操作系统警告。参与者Jan Kotas报告了在应用“Don't advance PC”补丁后，来宾操作系统无法启动的问题，并进一步调试发现访问ZCR_EL2时出现异常。
+本邮件讨论主题为“KVM NV + SVE主机操作系统警告”，主要涉及在KVM环境下使用SVE（Scalable Vector Extension）时出现的警告和问题。
 
-关键技术要点包括：
-1. Jan在调试过程中发现，来宾操作系统在清除CPTR_EL2时出现问题，导致SVE初始化失败。
-2. Marc Zyngier指出，当前的硬件版本（V2）缺乏必要的特性（FEAT_FGT），无法支持VHE（Virtualization Host Extensions）来宾，建议禁止在这些硬件上运行VHE来宾。
-3. Jan尝试了Marc提出的补丁，成功启动了VHE来宾，并确认SVE初始化正常。
+**原始patch/问题内容**：
+历史讨论中，Marc Zyngier指出警告是由于在存在待处理异常时递增程序计数器（PC）所导致的，表明存在严重的bug。他建议尝试一个patch，目的是避免PC的递增。
 
-讨论的结论是，虽然当前的硬件限制了VHE来宾的运行，但通过补丁可以在一定程度上解决问题。参与者决定继续测试并反馈补丁效果。待解决的问题包括如何在不支持VHE的硬件上更好地管理虚拟化功能。
+**之前讨论要点**：
+在之前的讨论中，Jan Kotas表示他无法轻易更改内核进行测试，但Marc和Oliver鼓励他尝试patch。Oliver提到他在自己的测试中没有重现该bug，并认为patch看起来不错。
+
+**本周的新讨论与进展**：
+Jan Kotas在本周的讨论中报告了他的测试结果。他首先在6.16.9上应用了“不要递增PC”的patch，虽然修复了错误信息，但来宾系统未能启动。随后在6.17上应用了该patch及Oliver的第二个patch，发现来宾系统在访问ZCR_EL2时因异常停止启动。经过进一步调试，Jan发现HCR_EL2的E2H位未正确设置，导致了问题。Marc Zyngier确认了这一点，并表示将发布一个patch以禁止在不支持VHE的旧硬件上运行VHE来宾。最终，Jan测试了Marc的解决方案，并确认在6.17.0上成功启动了VHE模式，SVE也正确初始化。
+
+总体来看，本周的讨论集中在调试和解决KVM与SVE兼容性问题上，参与者们积极分享了测试结果和解决方案。
 
 #### 📝 邮件列表
 
-1. **[10-07 11:12]** Re: KVM NV + SVE host OS warning
+1. **[09-25 15:38]** Re: KVM NV + SVE host OS warning
+   - 发件人: Marc Zyngier <maz@kernel.org>
+2. **[09-25 15:10]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-2. **[10-07 16:26]** Re: KVM NV + SVE host OS warning
+3. **[09-25 16:35]** Re: KVM NV + SVE host OS warning
+   - 发件人: Marc Zyngier <maz@kernel.org>
+4. **[09-25 15:46]** Re: KVM NV + SVE host OS warning
    - 发件人: Oliver Upton <oliver.upton@linux.dev>
-3. **[10-08 06:32]** Re: KVM NV + SVE host OS warning
+5. **[10-07 11:12]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-4. **[10-08 07:29]** Re: KVM NV + SVE host OS warning
+6. **[10-07 16:26]** Re: KVM NV + SVE host OS warning
+   - 发件人: Oliver Upton <oliver.upton@linux.dev>
+7. **[10-08 06:32]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-5. **[10-08 10:28]** Re: KVM NV + SVE host OS warning
+8. **[10-08 07:29]** Re: KVM NV + SVE host OS warning
+   - 发件人: Jan Kotas <jank@cadence.com>
+9. **[10-08 10:28]** Re: KVM NV + SVE host OS warning
    - 发件人: Marc Zyngier <maz@kernel.org>
-6. **[10-08 09:45]** Re: KVM NV + SVE host OS warning
+10. **[10-08 09:45]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-7. **[10-08 12:58]** Re: KVM NV + SVE host OS warning
+11. **[10-08 12:58]** Re: KVM NV + SVE host OS warning
    - 发件人: Marc Zyngier <maz@kernel.org>
-8. **[10-08 13:43]** Re: KVM NV + SVE host OS warning
+12. **[10-08 13:43]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-9. **[10-08 16:22]** Re: KVM NV + SVE host OS warning
+13. **[10-08 16:22]** Re: KVM NV + SVE host OS warning
    - 发件人: Marc Zyngier <maz@kernel.org>
-10. **[10-09 10:59]** Re: KVM NV + SVE host OS warning
+14. **[10-09 10:59]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-11. **[10-09 13:22]** Re: KVM NV + SVE host OS warning
+15. **[10-09 13:22]** Re: KVM NV + SVE host OS warning
    - 发件人: Marc Zyngier <maz@kernel.org>
-12. **[10-09 14:41]** Re: KVM NV + SVE host OS warning
+16. **[10-09 14:41]** Re: KVM NV + SVE host OS warning
    - 发件人: Jan Kotas <jank@cadence.com>
-13. **[10-09 16:01]** Re: KVM NV + SVE host OS warning
+17. **[10-09 16:01]** Re: KVM NV + SVE host OS warning
    - 发件人: Marc Zyngier <maz@kernel.org>
 
 ---
@@ -783,13 +913,13 @@
 
 #### 🤖 AI 总结
 
-该邮件讨论的主要技术问题是关于 KVM 单元测试中的一个补丁，旨在改善 x86 架构下叶函数的回溯信息。邮件由 Mathias Krause 发出，主要请求 Paolo 对该补丁进行评论，以便推动 ARM 和 AArch64 的相关修复不再受阻，并希望这一系列补丁能够尽快合并。
+本邮件讨论的主题是关于一个针对 x86 架构的补丁，旨在改善叶子函数的回溯信息。该补丁是 kvm-unit-tests 项目中的一部分，具体编号为 PATCH v2 2/4。
 
-关键技术要点包括：
-1. 补丁的目标是提升在 x86 架构下对叶函数的回溯能力，这对于调试和分析系统性能至关重要。
-2. 该补丁可能会影响到 ARM 和 AArch64 的实现，因此其合并进程对其他架构的修复工作具有重要影响。
+在历史讨论中，尚未有相关的邮件记录，因此没有提供具体的背景信息或之前的讨论要点。
 
-讨论的结论是，Mathias Krause 希望能够尽快获得 Paolo 的反馈，以便推动整个补丁系列的合并进程，确保 ARM 和 AArch64 的修复工作不再延迟。当前的待解决问题是如何加快对该补丁的审查和合并。
+在本周的新讨论中，参与者 Mathias Krause 提到希望 Paolo 能对该补丁进行评论，以便 ARM 和 AArch64 的修复不再受到阻碍，并且希望这一系列补丁能够尽快合并。这表明该补丁的合并对其他架构的修复工作有直接影响，且参与者对进展持积极态度。
+
+总体来看，本周的讨论集中在推动补丁的审查和合并上，以促进整体项目的进展。
 
 #### 📝 邮件列表
 
@@ -801,7 +931,7 @@
 
 ## 📌 Other
 
-共 4 个 thread
+共 1 个 thread
 
 ---
 
@@ -811,11 +941,13 @@
 
 #### 🤖 AI 总结
 
-在此次邮件讨论中，主要关注的是 HCR_EL2 寄存器的值差异问题。参与者 Jan Kotas 在调试过程中发现，通过 KVM_GET_ONE_REG 获取的 HCR_EL2 值与在客体中执行 `mrs x1, hcr_el2` 指令后得到的值不一致，分别为 0x30480000000 和 0x100030080000000。Jan 询问这种差异是否正常，并探讨了访问模拟寄存器时可能存在的遗漏。
+本邮件讨论的主题是关于 HCR_EL2 寄存器在 KVM 中的值差异。Jan Kotas 提出了一个问题，他在调试过程中发现通过 KVM_GET_ONE_REG 获取的 HCR_EL2 值（0x30480000000）与在虚拟机中执行 `mrs x1, hcr_el2` 指令后得到的值（0x100030080000000）不一致。他询问这种差异是否正常，以及在访问模拟寄存器时是否有遗漏。
 
-Marc Zyngier 指出，客体可以随意写入 HCR_EL2 寄存器，而 KVM_GET_ONE_REG 返回的是经过处理的值，反映了特定配置下的寄存器状态。Jan 提出是否可以增加一个能力标志，以便获取未处理的原始值，以便于调试。Marc 则强调了当前设计的合理性，认为这种“去污”处理有助于确保 KVM 不会返回错误数据。
+Marc Zyngier 对此进行了回应，询问了更多的上下文信息，包括访问的时机和虚拟机的配置。他指出，虚拟机可以随意写入 HCR_EL2 寄存器，但这些写入在未执行 ERET 到 EL1 时不会产生效果。GET_ONE_REG 返回的是经过处理的寄存器视图，考虑了特定配置的约束。
 
-最终，双方达成共识，认为当前的设计不仅是正确的，而且是期望的行为。Jan 还建议在内核文档中增加关于寄存器去污处理的说明，以帮助开发者理解这一机制。整体讨论有助于澄清 HCR_EL2 的行为及其在虚拟化环境中的调试价值。
+在后续的讨论中，Jan 表达了希望能够获取未处理值的需求，以便更好地进行调试。Marc 则强调了当前设计的合理性，认为这种“清洗”机制可以防止从 KVM 中获取错误数据，并且有助于比较硬件行为与虚拟机行为。
+
+最终，双方达成共识，认为当前的行为是合理且有价值的，Jan 还建议在内核文档中增加关于清洗机制的说明，以帮助开发者理解。
 
 #### 📝 邮件列表
 
@@ -835,63 +967,6 @@ Marc Zyngier 指出，客体可以随意写入 HCR_EL2 寄存器，而 KVM_GET_O
    - 发件人: Jan Kotas <jank@cadence.com>
 8. **[10-10 14:12]** Re: HCR_EL2 GET_ONE_REG value difference
    - 发件人: Marc Zyngier <maz@kernel.org>
-
----
-
-### Thread 2: Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.6-stable tree
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Mon, 06 Oct 2025 12:08:26 +0200
-
-#### 🤖 AI 总结
-
-本邮件讨论的主要技术问题是针对 KVM（Kernel-based Virtual Machine）在 ARM64 架构下的 FPSIMD（Floating Point SIMD）寄存器保存序列中的软中断（softirq）屏蔽问题的修复。补丁标题为“Fix softirq masking in FPSIMD register saving sequence”，已被添加到 Linux 内核的 6.6 稳定版本树中。
-
-关键技术要点包括：之前的补丁修复了由于错误回溯导致的内核 BUG，但在重新启用软中断时可能导致死锁，因为处理待处理的软中断时可能会持有锁。为了解决这一问题，新的补丁在保存 FPSIMD 寄存器时，除了禁用软中断外，还禁用了硬中断（hardirq），以避免在持有锁的情况下处理软中断。
-
-讨论的主要结论是，该补丁已被确认并添加到稳定树中，但仍需关注是否有其他潜在问题。如果有任何人认为该补丁不应被添加，需及时向稳定邮件列表反馈。
-
-#### 📝 邮件列表
-
-1. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.6-stable tree
-   - 发件人: gregkh <gregkh@linuxfoundation.org>
-
----
-
-### Thread 3: Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.1-stable tree
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Mon, 06 Oct 2025 12:08:17 +0200
-
-#### 🤖 AI 总结
-
-本邮件讨论的主要技术问题是针对 KVM（内核虚拟机）在 ARM64 架构下的 FPSIMD（浮点 SIMD）寄存器保存序列中软中断（softirq）屏蔽的修复。补丁标题为“Fix softirq masking in FPSIMD register saving sequence”，已被添加到 6.1-stable 树中。
-
-关键技术要点包括：补丁修复了由于错误回溯导致的内核 BUG，确保在 FPSIMD 寄存器保存操作期间禁用和启用软中断。然而，这一修复可能导致死锁问题，因为在重新启用软中断时，可能会在持有锁的情况下处理待处理的软中断。为了解决这一问题，补丁进一步在保存 FPSIMD 寄存器时禁用了硬中断（hardirq）。
-
-讨论的主要结论是，补丁已成功解决了原有的 BUG，但仍需关注新引入的死锁风险。开发者们建议继续监测这一问题，并在必要时进行进一步的修复和优化。
-
-#### 📝 邮件列表
-
-1. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 6.1-stable tree
-   - 发件人: gregkh <gregkh@linuxfoundation.org>
-
----
-
-### Thread 4: Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 5.15-stable tree
-
-**📧 邮件数**: 1 | **👥 参与者**: 1 | **📅 开始时间**: Mon, 06 Oct 2025 12:08:08 +0200
-
-#### 🤖 AI 总结
-
-本邮件讨论的主要技术问题是针对 KVM（内核虚拟机）在 arm64 架构下的 FPSIMD（浮点 SIMD）寄存器保存序列中的软中断屏蔽修复。Will Deacon 提出的补丁旨在解决在保存 FPSIMD 寄存器时可能导致死锁的问题，特别是在重新启用软中断时，可能会在持有锁的情况下处理待处理的软中断，从而引发递归锁定错误。
-
-关键技术要点包括：补丁通过在保存 FPSIMD 寄存器时禁用硬中断，来避免在处理软中断时发生死锁。这是对之前修复的进一步完善，确保在进行寄存器保存操作时，系统的中断状态不会导致不必要的锁竞争。
-
-讨论的结论是，该补丁已被添加到 5.15-stable 树中，参与者被邀请就补丁的稳定性提出意见。虽然当前问题得到了一定程度的解决，但仍需关注可能的后续问题，确保系统在高负载情况下的稳定性和性能。
-
-#### 📝 邮件列表
-
-1. **[10-06 12:08]** Patch "KVM: arm64: Fix softirq masking in FPSIMD register saving sequence" has been added to the 5.15-stable tree
-   - 发件人: gregkh <gregkh@linuxfoundation.org>
 
 ---
 
