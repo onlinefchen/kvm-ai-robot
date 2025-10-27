@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVMARM 邮件列表 AI 总结报告</title>
+    <style>
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            line-height: 1.5;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            background-color: #ffffff;
+            color: #222;
+        }
+        .container {
+            background: #ffffff;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.3em;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+        h2 {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #000;
+            margin-top: 2em;
+            margin-bottom: 0.6em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #111;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h4 {
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }
+        .meta-info {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .meta-info p {
+            margin: 6px 0;
+            color: #444;
+        }
+        .meta-info strong {
+            color: #000;
+            font-weight: bold;
+        }
+        .stats {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #000;
+        }
+        .stat-card {
+            display: table-cell;
+            border: 1px solid #000;
+            padding: 12px 15px;
+            text-align: center;
+            background: #fafafa;
+        }
+        .stat-card h3 {
+            margin: 0;
+            color: #000;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: none;
+            padding: 0;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: #444;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+        .category {
+            margin: 30px 0;
+        }
+        .thread {
+            margin: 25px 0;
+            padding: 15px;
+            background: #fafafa;
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+        .thread-header {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .thread-header h3 {
+            font-size: 1.15em;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+        .thread-meta {
+            display: block;
+            margin: 8px 0 12px 0;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+        }
+        .thread-meta span {
+            margin-right: 15px;
+        }
+        .ai-summary {
+            background: #fff;
+            border-left: 3px solid #666;
+            padding: 12px 15px;
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #222;
+            font-style: italic;
+        }
+        .email-list {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .email-item {
+            margin: 4px 0;
+            padding: 2px 0;
+            color: #222;
+        }
+        .email-item.historical {
+            background: #f5f5f5;
+            border-left: 3px solid #999;
+            padding-left: 8px;
+            opacity: 0.8;
+        }
+        .email-item.new {
+            background: #fffef0;
+            border-left: 3px solid #0066cc;
+            padding-left: 8px;
+        }
+        .email-date {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .email-date.historical {
+            color: #666;
+        }
+        .email-sender {
+            color: #c30;
+            font-weight: normal;
+        }
+        .email-subject {
+            color: #000;
+        }
+        .historical-marker {
+            color: #999;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+        .new-marker {
+            color: #0066cc;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .archive-link {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #000;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .archive-link:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KVMARM Mailing List Analysis Report</h1>
+
+        <div class="meta-info">
+            <p><strong>Generated:</strong> 2025-10-27 08:51</p>
+            <p><strong>Time Period:</strong> 2025年1月 第4周 (01/20 - 01/26)</p>
+            <p><strong>Total Messages:</strong> 78 | <strong>Total Threads:</strong> 10</p>
+            <p style="text-align: center;"><a href="archive.html" class="archive-link">📚 历史归档 Archive</a></p>
+        </div>
+
+
+        <div class="category">
+            <h2>PATCH</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v5 0/4] KVM: arm64: Errata management for VM Live migration</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>5 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-01-24</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 ARM64 平台上进行虚拟机实时迁移时的错误管理（Errata management）。Shameer Kolothum 提出了一个包含四个补丁的系列更新（PATCH v5 0/4），旨在改进虚拟机迁移过程中的错误处理。<br><br>历史讨论中，Shameer 提到 ARM64 平台的许多错误修复依赖于 CPU 的 MIDR/REVIDR 值，而这些值在迁移到不同平台时可能会有所不同，这导致了在虚拟机迁移时的兼容性问题。之前的版本（v1 到 v4）中，Shameer 针对社区反馈进行了多次修改，增加了新的超调用（hypercall）以获取目标 CPU 的实现信息，并对 MIDR/REVIDR 的处理进行了调整。<br><br>在本周的新讨论中，Shameer 提交了 v5 版本的补丁，主要更新包括：<br>1. 增加了用于获取目标实现 CPU 版本和数量的超调用。<br>2. 移除了不再适用的 R-by 标签，并对补丁进行了小幅修改。<br>3. 通过 Qemu 分支提供了测试方法，确保补丁的可行性。<br><br>整体来看，本周的讨论集中在对补丁的最终审查和测试方法的确认上，Shameer 邀请参与者提供反馈，以便进一步完善这些补丁。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-24]</span> <span class="email-subject">[PATCH v5 0/4] KVM: arm64: Errata management for VM Live migration</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameer Kolothum <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-24]</span> <span class="email-subject">[PATCH v5 1/4] arm64: Modify _midr_range() functions to read MIDR/REVIDR internally</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameer Kolothum <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-24]</span> <span class="email-subject">[PATCH v5 2/4] KVM: arm64: Introduce hypercall support for retrieving target implementations</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameer Kolothum <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-24]</span> <span class="email-subject">[PATCH v5 3/4] KVM: arm64: Report all the KVM/arm64-specific hypercalls</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameer Kolothum <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-24]</span> <span class="email-subject">[PATCH v5 4/4] arm64: paravirt: Enable errata based on implementation CPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameer Kolothum <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v2 09/12] KVM: arm64: nv: Propagate
+ CNTHCTL_EL2.EL1NV{P,V}CT bits</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>4 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-01-06</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论的主题是关于 KVM 在 ARM64 架构下对 CNTHCTL_EL2.EL1NV{P,V}CT 位的传播的补丁（PATCH v2 09/12）。该补丁旨在解决 KVM ARM 中关于访客（guest）对非易失性（NV）和 E2H 视图的约束问题。<br><br>在历史讨论中，Wei-Lin Chang 提出了对 NV 约束的疑问，Marc Zyngier 指出这些约束在 kvm-arm64/nv-e2h-select 分支中得到了执行，并强调了理解补丁系列的复杂性。<br><br>本周的新讨论中，Wei-Lin Chang 表达了对 Marc 提供信息的感谢，并表示需要进一步研究相关代码。与此同时，Volodymyr Babchuk 提出了在 Amazon Graviton 4 平台上使用该补丁系列启动 Xen 时遇到的问题，指出在处理 EL2 定时器状态时，补丁中的某些逻辑导致了定时器值的覆盖，影响了 Xen 的正常运行。他询问了对此问题的正确修复方案，并提到在 Dom0 中也观察到与定时器相关的问题，但尚未确定具体原因。<br><br>总体来看，讨论集中在补丁的实现细节及其在特定硬件平台上的适用性和潜在问题上。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-06]</span> <span class="email-subject">Re: [PATCH v2 09/12] KVM: arm64: nv: Propagate
+ CNTHCTL_EL2.EL1NV{P,V}CT bits</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Wei-Lin Chang <span class="email-sender">&lt;r09922117@csie.ntu.edu.tw&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-17]</span> <span class="email-subject">Re: [PATCH v2 09/12] KVM: arm64: nv: Propagate CNTHCTL_EL2.EL1NV{P,V}CT bits</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [PATCH v2 09/12] KVM: arm64: nv: Propagate
+ CNTHCTL_EL2.EL1NV{P,V}CT bits</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Wei-Lin Chang <span class="email-sender">&lt;r09922117@csie.ntu.edu.tw&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-26]</span> <span class="email-subject">Re: [PATCH v2 02/12] KVM: arm64: nv: Sync nested timer state with
+ FEAT_NV2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Volodymyr Babchuk <span class="email-sender">&lt;Volodymyr_Babchuk@epam.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH RFC v3 09/27] KVM: arm64: Factor SVE guest exit handling
+ out into a function</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-01-17</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论主题为“[PATCH RFC v3 09/27] KVM: arm64: 将 SVE 客户端退出处理提取为一个函数”。该补丁旨在改善 KVM 在 arm64 架构下对 SVE（Scalable Vector Extension）状态的处理。<br><br>在历史讨论中，Mark Rutland 提到了一个潜在的隐性错误，可能与此补丁相关，指出该错误是在特定提交（8c8010d69c132273）中引入的。他对当前的 IRQ 处理提出了疑虑，认为在调用 `kvm_arch_vcpu_put_fp()` 时，IRQ 可能会被中断，这引发了对补丁的进一步审视。<br><br>在本周的新讨论中，Marc Zyngier 和 Mark Rutland 继续探讨如何处理 ZCR_ELx 寄存器的保存和恢复。Marc Zyngier 提出可以考虑提前保存/恢复 ZCR_ELx，Mark Rutland 表示赞同，并表示将进一步确认这一方案的可行性并进行相应的修改。<br><br>总体而言，本周的讨论集中在如何有效解决 SVE 状态处理中的问题，并对补丁的实现细节进行了深入探讨。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-17]</span> <span class="email-subject">Re: [PATCH RFC v3 09/27] KVM: arm64: Factor SVE guest exit handling
+ out into a function</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Rutland <span class="email-sender">&lt;mark.rutland@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [PATCH RFC v3 09/27] KVM: arm64: Factor SVE guest exit handling out into a function</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [PATCH RFC v3 09/27] KVM: arm64: Factor SVE guest exit handling
+ out into a function</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Rutland <span class="email-sender">&lt;mark.rutland@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH] KVM: arm64: Flush hyp bss section after initialization of
+ variables in bss</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-01-20</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的一个补丁，目的是在初始化 BSS（未初始化数据段）变量后刷新 HYP（Hypervisor）BSS 部分。<br><br>**原始补丁内容**：<br>补丁建议在完成 BSS 变量初始化后，刷新整个 HYP BSS 部分，以确保 EL2（异常级别2）能够正确读取 CPU 特性寄存器的值。当前实现中，由于未刷新这些变量，导致 EL2 读取到的值为 0，从而引发内核崩溃。<br><br>**之前讨论要点**：<br>补丁的动机是解决在 EL1（异常级别1）初始化过程中，HYP 无法正确处理 SVE（Scalable Vector Extension）寄存器的访问问题。历史讨论中并未提及具体的补丁内容，但可以推测出该问题的严重性。<br><br>**本周新讨论进展**：<br>本周的讨论中，Lokesh Vutla 提出了补丁，并解释了问题的根源。Marc Zyngier 对补丁提出了质疑，认为在 HYP 初始化后进行 BSS 刷新可能会导致错误，并建议在 kvm_hyp_init_symbols() 中进行刷新。Lokesh 随后承认了补丁中的问题，表示将根据反馈进行修改，并计划在下一版本中调整刷新位置，以确保在 MMU 关闭时能够正确读取数据。<br><br>总的来说，本周的讨论集中在补丁的有效性和实现细节上，参与者之间的互动促进了对问题的深入理解和解决方案的优化。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[PATCH] KVM: arm64: Flush hyp bss section after initialization of
+ variables in bss</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Lokesh Vutla <span class="email-sender">&lt;lokeshvutla@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">Re: [PATCH] KVM: arm64: Flush hyp bss section after initialization of variables in bss</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [PATCH] KVM: arm64: Flush hyp bss section after initialization of
+ variables in bss</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Lokesh Vutla <span class="email-sender">&lt;lokeshvutla@google.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH kvmtool v1 0/2] Error handling fixes</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-01-20</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论主题为「[PATCH kvmtool v1 0/2] 错误处理修复」，主要涉及 kvmtool 在错误处理方面的两个修复补丁。<br><br>**原始补丁内容**：<br>本次补丁包含两个主要修复：第一个补丁旨在确保 kvm-unit-tests 能够检测测试失败的情况；第二个补丁则是改善特定错误信息的可读性。<br><br>**之前讨论要点**：<br>在历史讨论中，未提及具体的讨论内容，但可以推测出，参与者关注 kvmtool 在与 kvm-unit-tests 集成时的错误处理机制。<br><br>**本周新讨论与进展**：<br>本周的讨论主要集中在两个补丁的具体实现上。第一个补丁通过传播 VCPU 线程的返回码，解决了多个 VCPU 线程退出时可能出现的错误覆盖和未初始化值的问题，确保 kvmtool 在遇到未处理错误时能返回非零退出码。第二个补丁则将原本的警告信息修改为调试信息，以避免在错误处理时输出冗余或误导的信息，提升调试的有效性。<br><br>总的来说，这些修复旨在增强 kvmtool 的错误处理能力，提高其在自动化测试中的可靠性和可维护性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[PATCH kvmtool v1 0/2] Error handling fixes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[PATCH kvmtool v1 1/2] Propagate the error code from any VCPU thread</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[PATCH kvmtool v1 2/2] Do not a print a warning on failing host<->guest address translation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v2] KVM: arm64: Flush hyp bss section after initialization of
+ variables in bss</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>2 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-01-21</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的补丁，主题为“在初始化 bss 区域变量后刷新 hyp bss 区域”。该补丁的主要目的是在初始化过程中，确保 CPU 特性寄存器的值能够被 EL2 访问，因此需要在更新后刷新整个 bss 区域，而不是逐个刷新变量，以提高效率。<br><br>在历史讨论中，补丁的初版（v1）已在邮件中提及，并对其进行了修改以改善提交信息和函数调用。补丁的背景是，之前的提交（6c30bfb18d0b）引入了对受保护虚拟机系统寄存器的处理，这与当前补丁的目的相关。<br><br>在本周的新讨论中，补丁的作者 Lokesh Vutla 提交了补丁的第二版（v2），并详细说明了补丁的实现逻辑。参与者 Marc Zyngier 对该补丁表示认可，并确认已将其应用于修复中。最终，该补丁成功提交并记录为 commit: 9bcbb6104a344d3526e185ee1e7b985509914e90。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">[PATCH v2] KVM: arm64: Flush hyp bss section after initialization of
+ variables in bss</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Lokesh Vutla <span class="email-sender">&lt;lokeshvutla@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [PATCH v2] KVM: arm64: Flush hyp bss section after initialization of variables in bss</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>RFC</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>14 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-01-08</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 KVM 的 Arm SMMUv3 驱动的 RFC PATCH v2，主要关注于 pKVM 的实现和设计。<br><br>1. **原始 patch/问题的内容**：该补丁系列旨在为 KVM 提供 Arm SMMUv3 驱动，支持在虚拟化环境中进行设备的内存管理和地址转换。讨论的重点是如何在 pKVM 中实现有效的 IOMMU（输入输出内存管理单元）功能。<br><br>2. **之前讨论要点**：历史讨论中，参与者们探讨了主机与客体之间的区别，强调了在 pKVM 中实现嵌套翻译的重要性。Jason Gunthorpe 提到，主机和客体的地址映射方式不同，必须考虑如何保护客体免受主机的影响。Kevin Tian 也提到，嵌套翻译对于 ARM vSMMU 是必需的，且需要在设计中考虑如何简化代码以减少重复。<br><br>3. **本周的新讨论、进展或结论**：在本周的讨论中，Mostafa Saleh 表示将采取更简化的分阶段方法，优先实现 DMA 隔离功能，并计划在 v3 版本中去除部分复杂的参数虚拟化内容。Jason Gunthorpe 和 Kevin Tian 也就如何处理 IOMMU 映射进行了深入讨论，强调了保持代码简洁和可维护性的重要性。整体来看，参与者们一致认为，pKVM 的 IOMMU 驱动需要在设计上保持简洁，以便于未来的扩展和维护。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-08]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mostafa Saleh <span class="email-sender">&lt;smostafa@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-16]</span> <span class="email-subject">RE: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Tian, Kevin <span class="email-sender">&lt;kevin.tian@intel.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-16]</span> <span class="email-subject">RE: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Tian, Kevin <span class="email-sender">&lt;kevin.tian@intel.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-16]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jason Gunthorpe <span class="email-sender">&lt;jgg@ziepe.ca&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-16]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jason Gunthorpe <span class="email-sender">&lt;jgg@ziepe.ca&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-17]</span> <span class="email-subject">RE: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Tian, Kevin <span class="email-sender">&lt;kevin.tian@intel.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mostafa Saleh <span class="email-sender">&lt;smostafa@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mostafa Saleh <span class="email-sender">&lt;smostafa@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mostafa Saleh <span class="email-sender">&lt;smostafa@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jason Gunthorpe <span class="email-sender">&lt;jgg@ziepe.ca&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mostafa Saleh <span class="email-sender">&lt;smostafa@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-22]</span> <span class="email-subject">Re: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jason Gunthorpe <span class="email-sender">&lt;jgg@ziepe.ca&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">RE: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Tian, Kevin <span class="email-sender">&lt;kevin.tian@intel.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">RE: [RFC PATCH v2 00/58] KVM: Arm SMMUv3 driver for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Tian, Kevin <span class="email-sender">&lt;kevin.tian@intel.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[RFC PATCH v2 27/58] KVM: arm64: smmu-v3: Setup command queue</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>1 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-01-23</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的 SMMU-v3（系统内存管理单元版本3）命令队列设置的 RFC（请求反馈）补丁。该补丁旨在优化虚拟化环境中的内存管理。<br><br>在历史讨论中并没有提供具体的背景信息，因此我们无法得知之前的讨论要点。<br><br>本周的讨论中，参与者 Robin Murphy 对 Mostafa Saleh 提出的补丁进行了回复，提醒其在实现过程中需要重新实现一些错误修正措施，以避免生成某些问题命令序列。他指出，这些问题在当前内核驱动中是隐含存在的，暗示在补丁的实施过程中需要特别注意这些潜在的复杂性。<br><br>总体来看，本周的讨论聚焦于补丁实施中的潜在挑战，尤其是与错误处理相关的细节，强调了在开发过程中需要谨慎处理的技术细节。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [RFC PATCH v2 27/58] KVM: arm64: smmu-v3: Setup command queue</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Robin Murphy <span class="email-sender">&lt;robin.murphy@arm.com&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>GIT PULL</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[GIT PULL] KVM/arm64 updates for 6.14</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>2 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-01-17</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 6.14 版本的 KVM/arm64 更新。<br><br>**原始 patch/问题内容**：<br>Marc Zyngier 提交了一系列 KVM/arm64 的更新补丁，主要集中在调试和保护模式的清理工作上。此外，补丁还增加了对受保护模式下非受保护客户机的支持、EL2 定时器支持以及改进的 CoreSight 支持。<br><br>**之前讨论要点**：<br>在历史讨论中，Marc 提到这些更改主要是为了清理和修复现有功能，同时还涉及到解决一些复杂的冲突，这需要合并 arm64 的 cpufeature 分支和 kvmarm-fixes 分支。<br><br>**本周的新讨论、进展或结论**：<br>在本周的讨论中，Paolo Bonzini 确认已成功拉取 Marc 提交的补丁，表示感谢。这表明补丁已被接受并将纳入后续的开发工作中。整体来看，讨论进展顺利，补丁的整合工作得到了积极的反馈。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-01-17]</span> <span class="email-subject">[GIT PULL] KVM/arm64 updates for 6.14</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">Re: [GIT PULL] KVM/arm64 updates for 6.14</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Paolo Bonzini <span class="email-sender">&lt;pbonzini@redhat.com&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Other</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[kvm-unit-tests PATCH v2 00/18] arm/arm64: Add kvmtool to the runner script</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>41 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-01-20</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了对 KVM 单元测试框架的改进，主要是为 ARM 和 ARM64 架构添加对 kvmtool 的支持。原始的补丁系列（PATCH v2 00/18）旨在将 kvmtool 集成到测试运行脚本中，允许用户通过简单的命令运行所有测试。<br><br>在历史讨论中，补丁的主要内容包括：<br>1. 将 kvmtool 支持添加到 `run_tests.sh` 脚本中，允许用户通过配置和编译后使用 kvmtool 运行测试。<br>2. 讨论了 kvmtool 的优势，如更小的体积和更快的测试速度，但也指出了其与 QEMU 的不同之处。<br><br>本周的新讨论中，Alexandru Elisei 提出了多个补丁，主要进展包括：<br>1. 引入了新的测试参数 `kvmtool_params`，用于支持 kvmtool 特有的命令行参数。<br>2. 增加了 `disabled_if` 参数，允许在不支持的环境中跳过特定测试。<br>3. 修复了与 kvmtool 相关的多个脚本，确保测试能够正确执行。<br>4. 最终确认了 kvmtool 的支持已完全整合到测试框架中，用户可以通过配置 `--target=kvmtool` 来使用。<br><br>此外，参与者 Andrew Jones 对多个补丁进行了审查，并提出了一些改进建议，强调了代码的可读性和参数的统一性。整体来看，本次讨论有效推动了 kvmtool 的集成进程，增强了 KVM 单元测试的灵活性和可用性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 00/18] arm/arm64: Add kvmtool to the runner script</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 01/18] run_tests: Document --probe-maxsmp argument</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 02/18] Document environment variables</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 03/18] scripts: Refuse to run the tests if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 04/18] run_tests: Introduce unittest parameter 'qemu_params'</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 05/18] scripts: Rename run_qemu_status -> run_test_status</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 06/18] scripts: Merge the qemu parameter -smp into $qemu_opts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 07/18] scripts: Introduce kvmtool_opts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 08/18] scripts/runtime: Detect kvmtool failure in premature_failure()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 09/18] scripts/runtime: Skip test when kvmtool and $accel is not KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 10/18] scripts/arch-run: Add support for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 11/18] arm/run: Add support for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 12/18] scripts/runtime: Add default arguments for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 13/18] run_tests: Do not probe for maximum number of VCPUs when using kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 14/18] run_tests: Add KVMTOOL environment variable for kvmtool binary path</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 15/18] Add kvmtool_params to test specification</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 16/18] scripts/mkstandalone: Export $TARGET</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 17/18] unittest: Add disabled_if parameter and use it for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-20]</span> <span class="email-subject">[kvm-unit-tests PATCH v2 18/18] run_tests: Enable kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 01/18] run_tests: Document
+ --probe-maxsmp argument</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 02/18] Document environment variables</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 03/18] scripts: Refuse to run the tests
+ if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 04/18] run_tests: Introduce unittest
+ parameter 'qemu_params'</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 03/18] scripts: Refuse to run the tests
+ if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 05/18] scripts: Rename run_qemu_status
+ -> run_test_status</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 06/18] scripts: Merge the qemu
+ parameter -smp into $qemu_opts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 03/18] scripts: Refuse to run the tests
+ if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 03/18] scripts: Refuse to run the tests
+ if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 07/18] scripts: Introduce kvmtool_opts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 08/18] scripts/runtime: Detect kvmtool
+ failure in premature_failure()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 09/18] scripts/runtime: Skip test when
+ kvmtool and $accel is not KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 10/18] scripts/arch-run: Add support
+ for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-21]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 11/18] arm/run: Add support for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 12/18] scripts/runtime: Add default
+ arguments for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 12/18] scripts/runtime: Add default
+ arguments for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 13/18] run_tests: Do not probe for
+ maximum number of VCPUs when using kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 14/18] run_tests: Add KVMTOOL
+ environment variable for kvmtool binary path</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 15/18] Add kvmtool_params to test
+ specification</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 16/18] scripts/mkstandalone: Export
+ $TARGET</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 17/18] unittest: Add disabled_if
+ parameter and use it for kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-01-23]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v2 18/18] run_tests: Enable kvmtool</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Andrew Jones <span class="email-sender">&lt;andrew.jones@linux.dev&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,978 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVMARM 邮件列表 AI 总结报告</title>
+    <style>
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            line-height: 1.5;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            background-color: #ffffff;
+            color: #222;
+        }
+        .container {
+            background: #ffffff;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.3em;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+        h2 {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #000;
+            margin-top: 2em;
+            margin-bottom: 0.6em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #111;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h4 {
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }
+        .meta-info {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .meta-info p {
+            margin: 6px 0;
+            color: #444;
+        }
+        .meta-info strong {
+            color: #000;
+            font-weight: bold;
+        }
+        .stats {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #000;
+        }
+        .stat-card {
+            display: table-cell;
+            border: 1px solid #000;
+            padding: 12px 15px;
+            text-align: center;
+            background: #fafafa;
+        }
+        .stat-card h3 {
+            margin: 0;
+            color: #000;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: none;
+            padding: 0;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: #444;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+        .category {
+            margin: 30px 0;
+        }
+        .thread {
+            margin: 25px 0;
+            padding: 15px;
+            background: #fafafa;
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+        .thread-header {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .thread-header h3 {
+            font-size: 1.15em;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+        .thread-meta {
+            display: block;
+            margin: 8px 0 12px 0;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+        }
+        .thread-meta span {
+            margin-right: 15px;
+        }
+        .ai-summary {
+            background: #fff;
+            border-left: 3px solid #666;
+            padding: 12px 15px;
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #222;
+            font-style: italic;
+        }
+        .email-list {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .email-item {
+            margin: 4px 0;
+            padding: 2px 0;
+            color: #222;
+        }
+        .email-item.historical {
+            background: #f5f5f5;
+            border-left: 3px solid #999;
+            padding-left: 8px;
+            opacity: 0.8;
+        }
+        .email-item.new {
+            background: #fffef0;
+            border-left: 3px solid #0066cc;
+            padding-left: 8px;
+        }
+        .email-date {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .email-date.historical {
+            color: #666;
+        }
+        .email-sender {
+            color: #c30;
+            font-weight: normal;
+        }
+        .email-subject {
+            color: #000;
+        }
+        .historical-marker {
+            color: #999;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+        .new-marker {
+            color: #0066cc;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .archive-link {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #000;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .archive-link:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KVMARM Mailing List Analysis Report</h1>
+
+        <div class="meta-info">
+            <p><strong>Generated:</strong> 2025-10-27 10:35</p>
+            <p><strong>Time Period:</strong> 2025年5月 第20周 (05/12 - 05/18)</p>
+            <p><strong>Total Messages:</strong> 238 | <strong>Total Threads:</strong> 23</p>
+            <p style="text-align: center;"><a href="archive.html" class="archive-link">📚 历史归档 Archive</a></p>
+        </div>
+
+
+        <div class="category">
+            <h2>PATCH</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v3 01/10] arm/cpu: Add infra to handle generated ID
+ register definitions</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>27 messages</span>
+                    <span>4 participants</span>
+                    <span>Started: 2025-05-13</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 ARM 架构 CPU 的 ID 寄存器定义的补丁（PATCH v3 01/10），旨在增加对生成的 ID 寄存器定义的处理能力。<br><br>在历史讨论中，参与者们对补丁的内容进行了初步审查，提出了对术语和数据类型的建议，认为需要更清晰的注释来解释不同的索引类型。此外，讨论中提到需要考虑 KVM API 的一致性，以避免混淆。<br><br>本周的新讨论主要集中在补丁的具体实现和命名上。Eric Auger 和 Cornelia Huck 讨论了如何更好地命名一些定义，以便与 KVM API 关联，建议使用更具描述性的名称，并增加注释以提高可读性。参与者们还讨论了如何处理寄存器的可写性以及在不同 CPU 模型间的迁移兼容性问题。Daniel Berrangé 提到，虽然使用 'host' 模型在某种程度上可以简化迁移，但仍需确保在不同机器间的特性比较能够保证兼容性。<br><br>总体而言，本周的讨论推动了补丁的细化和完善，参与者们积极提出建议，以确保补丁在功能和可维护性上的提升。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 01/10] arm/cpu: Add infra to handle generated ID
+ register definitions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 01/10] arm/cpu: Add infra to handle generated ID
+ register definitions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 04/10] kvm: kvm_get_writable_id_regs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 06/10] arm/kvm: Allow reading all the writable ID
+ registers</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 07/10] arm/kvm: write back modified ID regs to KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 04/10] kvm: kvm_get_writable_id_regs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host cpu
+ model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 09/10] arm-qmp-cmds: introspection for ID register
+ props</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 10/10] arm/cpu-features: document ID reg properties</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 01/10] arm/cpu: Add infra to handle generated ID
+ register definitions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 04/10] kvm: kvm_get_writable_id_regs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 02/10] arm/cpu: Add sysreg properties generation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 00/10] kvm/arm: Introduce a customizable aarch64 KVM
+ host model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 10/10] arm/cpu-features: document ID reg properties</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">RE: [PATCH v3 00/10] kvm/arm: Introduce a customizable aarch64 KVM
+ host model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shameerali Kolothum Thodi <span class="email-sender">&lt;shameerali.kolothum.thodi@huawei.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v3 00/10] kvm/arm: Introduce a customizable aarch64 KVM
+ host model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v3 02/10] arm/cpu: Add sysreg properties generation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v3 02/10] arm/cpu: Add sysreg properties generation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v3 06/10] arm/kvm: Allow reading all the writable ID
+ registers</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v3 08/10] arm/cpu: more customization for the kvm host
+ cpu model</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v5 00/25] Tracefs support for pKVM</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>26 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-16</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了关于为 pKVM 添加 Tracefs 支持的补丁系列（[PATCH v5 00/25]）。以下是讨论的主要内容：<br><br>1. **原始补丁/问题的内容**：<br>   本补丁系列旨在为 pKVM 超级管理程序引入 Tracefs 支持，以便于调试和性能分析。Tracefs 提供了一种简单易用的接口，适合与内核和虚拟化环境共享数据。<br><br>2. **之前讨论的要点**：<br>   之前的讨论集中在如何实现远程事件和缓冲区的创建，以及如何将这些功能集成到 pKVM 中。补丁中引入了新的接口和数据结构，以支持远程环形缓冲区的操作，并确保内核能够正确读取这些数据。<br><br>3. **本周的新讨论、进展或结论**：<br>   本周的讨论主要围绕补丁的具体实现细节，包括：<br>   - 引入了新的简单环形缓冲区实现，旨在减少对 pKVM 超级管理程序的依赖。<br>   - 增加了对 Tracefs 目录的支持，使得用户空间工具能够访问和控制远程环形缓冲区。<br>   - 讨论了如何在 pKVM 中实现事件支持，允许超管在 Tracefs 中记录事件。<br>   - 进行了自测模块的开发，确保新功能的正确性和稳定性。<br><br>总的来说，本周的讨论进一步完善了 pKVM 的 Tracefs 支持，增强了其调试和性能分析能力。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 00/25] Tracefs support for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 01/25] ring-buffer: Add page statistics to the meta-page</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 02/25] ring-buffer: Introduce ring-buffer remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 03/25] tracing: Introduce trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 04/25] tracing: Add reset to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 05/25] tracing: Add init callback to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 06/25] tracing: Add events to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 07/25] tracing: Add events/ root files to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 08/25] tracing: Add helpers to create trace remote events</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 09/25] ring-buffer: Export buffer_data_page and macros</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 10/25] tracing: Introduce simple_ring_buffer</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 11/25] tracing: Add a trace remote module for testing</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 12/25] tracing: selftests: Add trace remote tests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 13/25] tracing: load/unload page callbacks for simple_ring_buffer</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 14/25] tracing: Check for undefined symbols in simple_ring_buffer</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 15/25] KVM: arm64: Support unaligned fixmap in the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 16/25] KVM: arm64: Add .hyp.data section</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 17/25] KVM: arm64: Add clock support for the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 18/25] KVM: arm64: Add tracing capability for the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 19/25] KVM: arm64: Add trace remote for the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 20/25] KVM: arm64: Sync boot clock with the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 21/25] KVM: arm64: Add trace reset to the pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 22/25] KVM: arm64: Add event support to the pKVM hyp and
+ trace remote</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 23/25] KVM: arm64: Add hyp_enter/hyp_exit events to pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 24/25] KVM: arm64: Add selftest event support to pKVM hyp</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v5 25/25] tracing: selftests: Add pKVM trace remote tests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v8 16/43] arm64: RME: Handle realm enter/exit</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>20 messages</span>
+                    <span>4 participants</span>
+                    <span>Started: 2025-04-30</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 ARM64 架构下的 RME（Realm Management Extensions）相关补丁，特别是处理 realm 进入和退出的功能。<br><br>1. **原始补丁内容**：补丁 [PATCH v8 16/43] 旨在实现对 realm 进入和退出的处理，确保在 KVM（Kernel-based Virtual Machine）环境中能够正确管理虚拟机的状态。<br><br>2. **之前讨论要点**：在历史讨论中，参与者对补丁的细节进行了多次审查和讨论，提出了对代码逻辑的改进建议，例如关于函数返回值的处理和代码复用的建议。Gavin Shan 和 Suzuki K Poulose 等人对补丁的实现提出了具体的修改意见，强调了代码的可读性和维护性。<br><br>3. **本周的新讨论与进展**：本周的讨论中，Steven Price 对补丁进行了进一步的修改，决定去掉某些不必要的检查，并探讨了如何在缺少有效 PC 值的情况下处理 kvm_exit 跟踪信息。此外，Emi Kisanuki 提供了对补丁的测试反馈，确认在其内部模拟器上成功启动了 realm 虚拟机，并通过了大部分测试。整体来看，补丁的实现逐步完善，参与者对其功能的有效性和稳定性表示认可。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-04-30]</span> <span class="email-subject">Re: [PATCH v8 16/43] arm64: RME: Handle realm enter/exit</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Gavin Shan <span class="email-sender">&lt;gshan@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-04-30]</span> <span class="email-subject">Re: [PATCH v8 17/43] arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Gavin Shan <span class="email-sender">&lt;gshan@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-01]</span> <span class="email-subject">Re: [PATCH v8 20/43] arm64: RME: Runtime faulting of memory</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Gavin Shan <span class="email-sender">&lt;gshan@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-02]</span> <span class="email-subject">Re: [PATCH v8 00/43] arm64: Support for Arm CCA in KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Gavin Shan <span class="email-sender">&lt;gshan@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-02]</span> <span class="email-subject">Re: [PATCH v8 13/43] arm64: RME: Support for the VGIC in realms</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Suzuki K Poulose <span class="email-sender">&lt;suzuki.poulose@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">Re: [PATCH v8 15/43] arm64: RME: Allow VMM to set RIPAS</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Suzuki K Poulose <span class="email-sender">&lt;suzuki.poulose@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">Re: [PATCH v8 16/43] arm64: RME: Handle realm enter/exit</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Suzuki K Poulose <span class="email-sender">&lt;suzuki.poulose@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">Re: [PATCH v8 17/43] arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Suzuki K Poulose <span class="email-sender">&lt;suzuki.poulose@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v8 13/43] arm64: RME: Support for the VGIC in realms</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v8 15/43] arm64: RME: Allow VMM to set RIPAS</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v8 16/43] arm64: RME: Handle realm enter/exit</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v8 16/43] arm64: RME: Handle realm enter/exit</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v8 15/43] arm64: RME: Allow VMM to set RIPAS</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Suzuki K Poulose <span class="email-sender">&lt;suzuki.poulose@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v8 15/43] arm64: RME: Allow VMM to set RIPAS</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">RE: [PATCH v8 00/43] arm64: Support for Arm CCA in KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Emi Kisanuki (Fujitsu) <span class="email-sender">&lt;fj0570is@fujitsu.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v8 17/43] arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v8 17/43] arm64: RME: Handle RMI_EXIT_RIPAS_CHANGE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v8 20/43] arm64: RME: Runtime faulting of memory</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v8 00/43] arm64: Support for Arm CCA in KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v8 00/43] arm64: Support for Arm CCA in KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Price <span class="email-sender">&lt;steven.price@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 00/17] KVM: arm64: Recursive NV support</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>18 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-14</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 ARM64 架构上对递归虚拟化（Recursive NV）支持的补丁系列（PATCH v4 00/17）。该补丁主要集中在实现 VNCR（Virtual Nested Context Register）支持，特别是 VNCR_EL2 的虚拟化。<br><br>在历史讨论中，Marc Zyngier 提到，VNCR 的实现涉及到在 EL2 中为 L1（第一层虚拟机）准备 VNCR 页，并确保 L2（第二层虚拟机）能够访问该页。补丁系列的重点是管理 TLB（Translation Lookaside Buffer）以确保在需要时能够正确访问 VNCR 页。<br><br>本周的新讨论中，Marc Zyngier 提出了多个补丁，具体进展包括：<br>1. 添加了 VNCR_EL2 的布局和分配 VNCR 页的逻辑，以支持在 ARMv8.4-NV 系统上运行 NV 客户机。<br>2. 引入了一个新的地址转换辅助函数，以支持 VNCR_EL2 的虚拟化。<br>3. 处理 VNCR_EL2 触发的故障，并确保在 MMU 通知时能够正确处理 VNCR 页的无效化。<br>4. 实现了 TLBI（Translation Lookaside Buffer Invalidate）指令的处理，以确保在虚拟化环境中能够正确管理 TLB。<br><br>这些补丁的最终目标是使 KVM 在 ARM64 上的递归虚拟化功能更加完善，并提供给用户空间对 VNCR_EL2 的访问能力。整体而言，该系列补丁在功能上已接近完整，但仍需进一步优化和测试。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 00/17] KVM: arm64: Recursive NV support</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 01/17] arm64: sysreg: Add layout for VNCR_EL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 02/17] KVM: arm64: nv: Allocate VNCR page when required</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 03/17] KVM: arm64: nv: Extract translation helper from the AT code</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 04/17] KVM: arm64: nv: Snapshot S1 ASID tagging information during walk</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 05/17] KVM: arm64: nv: Move TLBI range decoding to a helper</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 06/17] KVM: arm64: nv: Don't adjust PSTATE.M when L2 is nesting</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 07/17] KVM: arm64: nv: Add pseudo-TLB backing VNCR_EL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 08/17] KVM: arm64: nv: Add userspace and guest handling of VNCR_EL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 09/17] KVM: arm64: nv: Handle VNCR_EL2-triggered faults</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 10/17] KVM: arm64: nv: Handle mapping of VNCR_EL2 at EL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 11/17] KVM: arm64: nv: Handle VNCR_EL2 invalidation from MMU notifiers</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 12/17] KVM: arm64: nv: Program host's VNCR_EL2 to the fixmap address</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 13/17] KVM: arm64: nv: Add S1 TLB invalidation primitive for VNCR_EL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 14/17] KVM: arm64: nv: Plumb TLBI S1E2 into system instruction dispatch</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 15/17] KVM: arm64: nv: Remove dead code from ERET handling</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 16/17] KVM: arm64: Allow userspace to request KVM_ARM_VCPU_EL2*</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH v4 17/17] KVM: arm64: Document NV caps and vcpu flags</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 00/10] Stage-2 huge mappings for pKVM np-guests</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>17 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-09</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 pKVM 非特权虚拟机（np-guests）支持二级大页映射的补丁系列（PATCH v4 00/10）。该补丁旨在为 pKVM np-guests 安装 PMD（页中目录）级别的映射，特别是在 Stage-1 由 Hugetlbfs 或透明大页（THPs）支持时。<br><br>在历史讨论中，Vincent Donnefort 提出了多个补丁，逐步实现了对大页映射的支持，包括处理非特权虚拟机的缓存管理操作（CMOs）、引入遍历辅助函数、以及在 hypercall 中添加页数参数等。这些补丁的目的是优化内存管理，提高性能。<br><br>在本周的新讨论中，Marc Zyngier 对补丁提出了多项建议，主要集中在代码的安全性和可读性上。例如，他建议确保地址和大小对齐，以避免潜在的循环终止问题，并提出使用更一致的命名和类型检查。此外，他还对某些迭代器的安全性表示担忧，并建议在实现中增加更多的容错机制，以确保代码的健壮性。Vincent 对这些建议表示认可，并表示愿意进行相应的修改，以提高代码的未来适应性和安全性。<br><br>总体而言，本周的讨论进一步推动了补丁的完善，强调了代码质量和安全性的重要性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 00/10] Stage-2 huge mappings for pKVM np-guests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 01/10] KVM: arm64: Handle huge mappings for np-guest CMOs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 02/10] KVM: arm64: Introduce for_each_hyp_page</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 03/10] KVM: arm64: Add a range to __pkvm_host_share_guest()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 07/10] KVM: arm64: Convert pkvm_mappings to interval tree</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 09/10] KVM: arm64: Stage-2 huge mappings for np-guests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">[PATCH v4 10/10] KVM: arm64: np-guest CMOs with PMD_SIZE fixmap</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 01/10] KVM: arm64: Handle huge mappings for np-guest CMOs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 02/10] KVM: arm64: Introduce for_each_hyp_page</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 03/10] KVM: arm64: Add a range to __pkvm_host_share_guest()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 07/10] KVM: arm64: Convert pkvm_mappings to interval tree</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 09/10] KVM: arm64: Stage-2 huge mappings for np-guests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 10/10] KVM: arm64: np-guest CMOs with PMD_SIZE fixmap</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 01/10] KVM: arm64: Handle huge mappings for np-guest
+ CMOs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 10/10] KVM: arm64: np-guest CMOs with PMD_SIZE fixmap</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-17]</span> <span class="email-subject">Re: [PATCH v4 01/10] KVM: arm64: Handle huge mappings for np-guest CMOs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-17]</span> <span class="email-subject">Re: [PATCH v4 10/10] KVM: arm64: np-guest CMOs with PMD_SIZE fixmap</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v7 00/14] arm: rework id register storage</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>15 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-15</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论的主题是针对 ARM 架构的 ID 寄存器存储的重构，主要涉及一系列补丁（PATCH v7 00/14）。以下是讨论的主要内容：<br><br>1. **原始补丁/问题内容**：补丁系列旨在重构 ARM 架构中 ID 寄存器的存储方式，主要通过将 ID 寄存器的定义从结构体字段迁移到数组中，以便于管理和访问。补丁还包括对现有代码的清理和更新。<br><br>2. **之前讨论要点**：历史讨论中，补丁经历了多个版本的迭代（v1 到 v6），每个版本都针对前一个版本的反馈进行了修正和改进，包括修复转换错误、添加 SPDX 标识符、更新 MAINTAINERS 文件等。补丁的目标是提高代码的可维护性和可读性，同时确保功能的正确性。<br><br>3. **本周的新讨论、进展或结论**：在本周的讨论中，Eric Auger 提出了新的补丁（v7 00/14 至 v7 14/14），并引入了用于生成系统寄存器定义的脚本。这些脚本可以从 Linux 源代码树中自动生成寄存器定义，简化了寄存器管理的过程。此外，补丁还修正了 KVM 相关代码，使用了更简洁的文件描述符（fd）替代原来的 fdarray[2]，使代码更加整洁。<br><br>总体而言，此次讨论集中在 ARM 架构的 ID 寄存器重构上，旨在提升代码质量和可维护性，同时引入了自动化工具以简化寄存器定义的管理。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 00/14] arm: rework id register storage</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 01/14] arm/cpu: Add sysreg definitions in cpu-sysregs.h</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 02/14] arm/cpu: Store aa64isar0/aa64zfr0 into the idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 03/14] arm/cpu: Store aa64isar1/2 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 04/14] arm/cpu: Store aa64pfr0/1 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 05/14] arm/cpu: Store aa64mmfr0-3 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 06/14] arm/cpu: Store aa64dfr0/1 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 07/14] arm/cpu: Store aa64smfr0 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 08/14] arm/cpu: Store id_isar0-7 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 09/14] arm/cpu: Store id_pfr0/1/2 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 10/14] arm/cpu: Store id_dfr0/1 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 11/14] arm/cpu: Store id_mmfr0-5 into the idregs array</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 13/14] arm/cpu: switch to a generated cpu-sysregs.h.inc</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">[PATCH v7 14/14] arm/kvm: use fd instead of fdarray[2]</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 5/5] KVM: arm64: vgic-its: Clear ITE when DISCARD frees an ITE</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>14 messages</span>
+                    <span>4 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个关于 KVM（内核虚拟机）在 ARM64 架构下的补丁，主要涉及 VGIC-ITS 中 ITE 的处理和 FF-A 1.2 的支持。<br><br>1. **原始补丁内容**：补丁 [PATCH v4 5/5] 旨在解决在执行 DISCARD 操作时释放 ITE 的问题，确保在释放 ITE 时将其清除，以防止潜在的空指针解引用。<br><br>2. **之前讨论要点**：在本周的讨论中，David Sauerwein 报告了在将该补丁合并到 v6.6.64 和 v5.10.226 LTS 版本后，出现了在某些虚拟机中发生的空指针解引用问题。他怀疑这是由于竞争条件导致的，认为虚拟机可能在超管完成 DISCARD 操作之前重用已分配的内存。Marc Zyngier 对此表示怀疑，认为 KVM 不会在保存/恢复事件之外使用虚拟机的内存。<br><br>3. **本周的新讨论和进展**：本周的讨论主要集中在 David 的问题上，Marc 要求提供虚拟机的堆栈跟踪以进一步分析。与此同时，Per Larsen 提出了多个补丁，支持 FF-A 1.2 规范，增加了新的接口和功能，包括对 FFA_MSG_SEND_DIRECT_REQ2 的支持，并引入了新的内存插槽标志和 KVM 能力，以允许用户空间查询是否支持可缓存的 PFNMAP 映射。这些补丁经过多次修改，旨在解决与 GPU 设备内存的缓存性相关的安全问题。<br><br>总体而言，邮件讨论涉及了补丁的潜在问题、对 FF-A 1.2 的支持以及如何安全地处理虚拟机内存的缓存性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v4 5/5] KVM: arm64: vgic-its: Clear ITE when DISCARD frees an ITE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: David Sauerwein <span class="email-sender">&lt;dssauerw@amazon.de&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v4 5/5] KVM: arm64: vgic-its: Clear ITE when DISCARD frees an ITE</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 0/5] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 1/5] KVM: arm64: Restrict FF-A host version
+ renegotiation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 2/5] KVM: arm64: Zero x4-x7 in ffa_set_retval</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 3/5] KVM: arm64: Mark FFA_NOTIFICATION_* calls as
+ unsupported</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 4/5] KVM: arm64: Bump the supported version of FF-A to
+ 1.2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">[PATCH v4 5/5] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
+ host handler</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 0/5] KVM: arm64: Map GPU device memory as cacheable</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 1/5] KVM: arm64: Block cacheable PFNMAP mapping</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 2/5] KVM: arm64: Make stage2_has_fwb global scope</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 3/5] kvm: arm64: New memslot flag to indicate cacheable mapping</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 4/5] KVM: arm64: Allow cacheable stage 2 mapping using VMA flags</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-18]</span> <span class="email-subject">[PATCH v4 5/5] KVM: arm64: Expose new KVM cap for cacheable PFNMAP</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ankita <span class="email-sender">&lt;ankita@nvidia.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v6 00/14] arm: rework id register storage</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>13 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-05-06</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是对 ARM 架构的 ID 寄存器存储进行重构的补丁系列（PATCH v6 00/14）。历史讨论中，Cornelia Huck 提到了一些小的修正和重构，包括修复 Eric 指出的转换错误，并重新基于当前主分支进行了补丁更新。补丁的主要内容包括将特定的寄存器存储到 ID 寄存器数组中，以及引入自动生成系统寄存器定义的脚本。<br><br>在本周的新讨论中，Eric Auger 对补丁表示认可，确认没有发现其他转换问题，表示补丁系列看起来很好。此外，Daniel Berrangé 提出了对某些补丁的具体反馈，指出在某些情况下变量的移除时机不当，导致构建失败，并建议将许可证名称问题修正为“GPL-2.0-or-later”。总体来看，本周的讨论集中在对补丁的审查和细节修正上，推动了补丁的进一步完善，预计将发布第七版补丁。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v6 00/14] arm: rework id register storage</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v6 02/14] arm/cpu: Store aa64isar0/aa64zfr0 into the idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v6 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v6 14/14] arm/kvm: use fd instead of fdarray[2]</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v6 14/14] arm/kvm: use fd instead of fdarray[2]</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v6 00/14] arm: rework id register storage</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v6 00/14] arm: rework id register storage</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v6 02/14] arm/cpu: Store aa64isar0/aa64zfr0 into the
+ idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v6 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v6 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v6 02/14] arm/cpu: Store aa64isar0/aa64zfr0 into the
+ idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v6 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Eric Auger <span class="email-sender">&lt;eric.auger@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v6 12/14] arm/cpu: Add sysreg generation scripts</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v5 0/6] KVM: lockdep improvements</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>11 messages</span>
+                    <span>4 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本周讨论围绕 Maxim Levitsky 提出的补丁系列「KVM: lockdep improvements」展开，主要目的是改进 KVM 中的锁依赖检查（lockdep）机制。补丁系列包含六个部分，主要实现了使用 lockdep 的「nest_lock」特性来优化 KVM 虚拟 CPU（vCPU）的锁定操作。<br><br>历史讨论中，补丁的背景是 KVM 在锁定多个 vCPU 时，可能会触发 lockdep 的警告，尤其是在 vCPU 数量超过最大锁深度时。之前的实现使用了自定义的锁定方式，导致了重复代码和潜在的锁依赖问题。<br><br>本周的新讨论中，补丁的具体实现得到了进一步的确认和反馈。补丁通过引入 `kvm_lock_all_vcpus()` 和 `kvm_trylock_all_vcpus()` 函数，简化了锁定逻辑，并解决了 ARM 和 RISC-V 代码中的 lockdep 警告问题。参与者们对补丁表示支持，多个开发者（如 Anup Patel 和 Marc Zyngier）对补丁进行了测试和确认，表示认可。<br><br>总的来说，本周的讨论集中在补丁的实施细节和社区反馈上，显示出对改进 KVM 锁定机制的积极态度。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 0/6] KVM: lockdep improvements</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 1/6] locking/mutex: implement mutex_trylock_nested</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 2/6] locking/mutex: implement mutex_lock_killable_nest_lock</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 3/6] KVM: add kvm_lock_all_vcpus and kvm_trylock_all_vcpus</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 4/6] x86: KVM: SVM: use kvm_lock_all_vcpus instead of a custom implementation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 5/6] KVM: arm64: use kvm_trylock_all_vcpus when locking all vCPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH v5 6/6] RISC-V: KVM: use kvm_trylock_all_vcpus when locking all vCPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Maxim Levitsky <span class="email-sender">&lt;mlevitsk@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v5 6/6] RISC-V: KVM: use kvm_trylock_all_vcpus when
+ locking all vCPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Anup Patel <span class="email-sender">&lt;anup@brainfault.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v5 0/6] KVM: lockdep improvements</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Peter Zijlstra <span class="email-sender">&lt;peterz@infradead.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v5 3/6] KVM: add kvm_lock_all_vcpus and kvm_trylock_all_vcpus</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v5 5/6] KVM: arm64: use kvm_trylock_all_vcpus when locking all vCPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH 0/3] KVM: arm64: Address Translation fixes</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>9 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-05-14</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下的地址转换修复和 vGICv4 配置的补丁。<br><br>1. **原始补丁内容**：<br>   本次补丁主要包括三个部分：修复 PAR_EL1.{PTW,S} 的报告、教会地址转换处理访问故障、以及防止将未初始化的数据传递给 HCR_EL2。这些修复旨在提升 KVM 的稳定性和性能。<br><br>2. **之前讨论要点**：<br>   在历史讨论中，参与者们关注了 vGICv4（虚拟通用中断控制器版本4）的配置问题，尤其是如何在不同虚拟机之间灵活启用或禁用该功能。讨论中提到，vGICv4 的启用与系统的硬件支持密切相关，且存在一些不稳定的硬件实现。<br><br>3. **本周的新讨论和进展**：<br>   本周的讨论集中在 vGICv4 配置的实现细节上。Raghavendra Rao Ananta 提出了一个新的 GIC 属性 KVM_DEV_ARM_VGIC_CONFIG_GICV4，允许用户在特定虚拟机中启用或禁用 vGICv4。邮件中还详细描述了该属性的文档和自测扩展，确保在不同配置下的正确性。参与者 Ben Horgan 提出了对当前设计的质疑，认为在某些情况下，禁用状态下的默认行为可能过于严格。Marc Zyngier 则指出，某些硬件实现的不可靠性使得保持现有的严格性是必要的。<br><br>整体来看，本周的讨论推动了对 vGICv4 配置的深入理解，并为后续的补丁完善奠定了基础。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH 0/3] KVM: arm64: Address Translation fixes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Raghavendra Rao Ananta <span class="email-sender">&lt;rananta@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH 1/3] kvm: arm64: Add support for KVM_DEV_ARM_VGIC_CONFIG_GICV4 attr</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Raghavendra Rao Ananta <span class="email-sender">&lt;rananta@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH 2/3] docs: kvm: devices/arm-vgic-v3: Document
+ KVM_DEV_ARM_VGIC_CONFIG_GICV4 attr</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Raghavendra Rao Ananta <span class="email-sender">&lt;rananta@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">[PATCH 3/3] KVM: selftests: Extend vgic_init to test GICv4 config attr</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Raghavendra Rao Ananta <span class="email-sender">&lt;rananta@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Raghavendra Rao Ananta <span class="email-sender">&lt;rananta@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH 0/3] KVM: arm64: Allow vGICv4 configuration per VM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v1 0/6] VMM can handle guest SEA via KVM_EXIT_ARM_SEA</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>8 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-05-05</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个关于 KVM（内核虚拟机）处理 ARM 架构下的同步外部中止（SEA）的补丁系列，共包含六个补丁。补丁的主要问题是，当主机的 APEI 无法处理阶段 2 的同步外部中止时，KVM 会直接向 VCPU 注入异步 SError，这通常导致客体内核崩溃。补丁旨在提供一种更优雅的处理方式，以应对在现代数据中心服务器中常见的可恢复的未更正内存错误（UER）。<br><br>历史讨论中，补丁逐步提出了不同的解决方案，包括将 VCPU 的状态从用户空间处理 SEA、设置 FnV 位以指示无效的物理地址等。文档补丁则介绍了新的用户空间 API，以便更好地处理 SEA。<br><br>在本周的新讨论中，Jiaqi Yan 感谢 Alok Tiwari 指出补丁中的拼写错误，并表示已将修正纳入 V2 版本，等待其他补丁的审查。同时，Marc Zyngier 对补丁的具体实现提出了一些建议和疑问，包括是否需要隐藏某些信息、如何处理特定情况下的 SEA 以及补丁中某些代码的组织问题。<br><br>总体来看，本周的讨论集中在补丁的细节和实现的合理性上，推动了补丁的进一步完善。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-05]</span> <span class="email-subject">[PATCH v1 0/6] VMM can handle guest SEA via KVM_EXIT_ARM_SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jiaqi Yan <span class="email-sender">&lt;jiaqiyan@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-05]</span> <span class="email-subject">[PATCH v1 1/6] KVM: arm64: VM exit to userspace to handle SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jiaqi Yan <span class="email-sender">&lt;jiaqiyan@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-05]</span> <span class="email-subject">[PATCH v1 2/6] KVM: arm64: Set FnV for VCPU when FAR_EL2 is invalid</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jiaqi Yan <span class="email-sender">&lt;jiaqiyan@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-05]</span> <span class="email-subject">[PATCH v1 6/6] Documentation: kvm: new uAPI for handling SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jiaqi Yan <span class="email-sender">&lt;jiaqiyan@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-08]</span> <span class="email-subject">Re: [PATCH v1 6/6] Documentation: kvm: new uAPI for handling SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: ALOK TIWARI <span class="email-sender">&lt;alok.a.tiwari@oracle.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v1 6/6] Documentation: kvm: new uAPI for handling SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Jiaqi Yan <span class="email-sender">&lt;jiaqiyan@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v1 1/6] KVM: arm64: VM exit to userspace to handle SEA</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH v1 2/6] KVM: arm64: Set FnV for VCPU when FAR_EL2 is invalid</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v3 0/3] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>7 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-13</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 KVM（Kernel-based Virtual Machine）在 arm64 架构上支持 FF-A 1.2 及其新的 SEND_DIRECT2 ABI 的补丁集（PATCH v3 0/3）。该补丁集的主要目的是确保主机在与虚拟机监控器（hypervisor）协商后，不能使用低版本的 FF-A，以避免兼容性问题。<br><br>在历史讨论中，补丁的背景主要是 FF-A 1.2 规范引入了新的 SEND_DIRECT2 ABI，允许使用 x4-x17 寄存器作为消息负载。补丁集的核心内容包括：限制主机重新协商较低版本的 FF-A、提升支持的 FF-A 版本至 1.2，并在主机处理程序中支持 FFA_MSG_SEND_DIRECT_REQ2 接口。<br><br>本周的新讨论中，参与者 Per Larsen 提交了三个补丁，分别针对上述功能进行了详细实现。Will Deacon 对补丁进行了审查并提出了一些建议，包括简化某些函数的可见性、处理寄存器时的安全性问题，以及在错误处理时的逻辑改进。他对补丁的整体质量表示认可，并给予了支持。<br><br>总结来说，本周的讨论集中在补丁的实现细节和潜在的改进建议上，推动了 FF-A 1.2 在 KVM arm64 上的支持进程。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">[PATCH v3 0/3] KVM: arm64: Support FF-A 1.2 and SEND_DIRECT2 ABI</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">[PATCH v3 1/3] KVM: arm64: Restrict FF-A host version
+ renegotiation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">[PATCH v3 2/3] KVM: arm64: Bump the supported version of FF-A to
+ 1.2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">[PATCH v3 3/3] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
+ host handler</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Per Larsen via B4 Relay <span class="email-sender">&lt;devnull+perlarsen.google.com@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 1/3] KVM: arm64: Restrict FF-A host version
+ renegotiation</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Will Deacon <span class="email-sender">&lt;will@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3 2/3] KVM: arm64: Bump the supported version of FF-A to
+ 1.2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Will Deacon <span class="email-sender">&lt;will@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH v3 3/3] KVM: arm64: Support FFA_MSG_SEND_DIRECT_REQ2 in
+ host handler</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Will Deacon <span class="email-sender">&lt;will@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 00/24] Tracefs support for pKVM</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>7 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-06</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 pKVM 的 Tracefs 支持的补丁（PATCH v4 00/24）。该补丁旨在为保护模式下的虚拟机监控器提供调试和分析工具，Tracefs 被认为是一个理想的选择，因为它简单易用，并且支持多种工具。<br><br>在历史讨论中，Vincent Donnefort 提出了补丁的初步版本，并详细介绍了其功能和设计思路。Steven Rostedt 对补丁中的某个结构体的大小提出了质疑，认为应调整为 30 以避免内存对齐问题。<br><br>本周的新讨论中，Vincent 和 Steven 继续交流补丁的构建问题。Steven 报告了构建失败的具体错误，并建议对模块的构建方式进行调整，以确保所有必要的对象文件都能正确链接。Vincent 表示他已经在本地修复了相关问题，并计划在本周内提交补丁的 v5 版本，尽管他将于周末开始休假，可能会延迟对新版本的审查。<br><br>总体来看，讨论集中在补丁的构建问题和后续版本的准备上，双方都表现出对改进补丁的积极态度。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v4 00/24] Tracefs support for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v4 05/24] tracing: Add events to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">Re: [PATCH v4 05/24] tracing: Add events to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Rostedt <span class="email-sender">&lt;rostedt@goodmis.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">Re: [PATCH v4 05/24] tracing: Add events to trace remotes</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v4 00/24] Tracefs support for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Rostedt <span class="email-sender">&lt;rostedt@goodmis.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v4 00/24] Tracefs support for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Vincent Donnefort <span class="email-sender">&lt;vdonnefort@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [PATCH v4 00/24] Tracefs support for pKVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Steven Rostedt <span class="email-sender">&lt;rostedt@goodmis.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 00/43] KVM: arm64: Revamp Fine Grained Trap handling</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>5 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-06</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的细粒度陷阱处理的改进，主要是通过一系列补丁（patches）来实现。<br><br>1. **原始 patch/问题的内容**：Marc Zyngier 提出的补丁系列（[PATCH v4 00/43]）旨在重构细粒度陷阱处理，补丁数量较之前版本几乎翻倍，主要是为了引入 FG2（Fine Grained Trap 2）及其相关依赖。补丁中包括对 CPACR_EL 的缺失位域的补充和对 FEAT_FGT2 寄存器的清理。<br><br>2. **之前的讨论要点**：在历史邮件中，Marc 提到补丁的紧迫性，强调需要尽快合并或放弃。此外，补丁的更改涉及多个文件，增加了功能的复杂性，但也带来了更好的灵活性和可维护性。<br><br>3. **本周的新讨论、进展或结论**：在本周的讨论中，Joey Gouly 对两个补丁进行了审查，分别是关于使用 FGT 特性映射驱动 RES0 位的补丁和对 FEAT_FGT2 寄存器的清理补丁。他对补丁的修改表示认可，并确认了使用 feat_pauth() 的更改是合适的。Joey 的审查意见为补丁的进一步合并提供了支持，表明这些补丁在社区中得到了积极的反馈。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v4 00/43] KVM: arm64: Revamp Fine Grained Trap handling</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v4 33/43] KVM: arm64: Use FGT feature maps to drive RES0 bits</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH v4 38/43] KVM: arm64: Add sanitisation for FEAT_FGT2 registers</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH v4 33/43] KVM: arm64: Use FGT feature maps to drive RES0
+ bits</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Joey Gouly <span class="email-sender">&lt;joey.gouly@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-15]</span> <span class="email-subject">Re: [PATCH v4 38/43] KVM: arm64: Add sanitisation for FEAT_FGT2
+ registers</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Joey Gouly <span class="email-sender">&lt;joey.gouly@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH 00/10] perf: arm_spe: Armv8.8 SPE features</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-06</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 Armv8.8 SPE（Sampling Program Execution）特性的补丁，主要由 James Clark 提出。补丁包含 10 个部分，旨在支持三项新特性：FEAT_SPEv1p4 过滤器、FEAT_SPE_EFT 扩展过滤和 SPE_FEAT_FDS 数据源过滤。这些特性相互独立，可以单独应用。补丁的前两项特性可以与旧版 Perf 工具兼容，但最后一项特性需要对 Perf 工具进行修改以解析新的配置。<br><br>在历史讨论中，James Clark 提到了补丁的具体内容，包括新增的系统寄存器字段和相关特性的描述。这些寄存器和字段是为了支持新特性而引入的。<br><br>在本周的新讨论中，Marc Zyngier 对补丁的某些部分进行了回应，提到这些新字段在 JSON 文件中被描述为枚举类型，并提供了相关链接以供参考。这表明讨论正在继续，参与者对补丁的细节进行深入探讨。整体来看，补丁的进展良好，相关特性正在逐步完善。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH 00/10] perf: arm_spe: Armv8.8 SPE features</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: James Clark <span class="email-sender">&lt;james.clark@linaro.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-06]</span> <span class="email-subject">[PATCH 01/10] arm64: sysreg: Add new PMSIDR_EL1 and PMSFCR_EL1
+ fields</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: James Clark <span class="email-sender">&lt;james.clark@linaro.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH 01/10] arm64: sysreg: Add new PMSIDR_EL1 and PMSFCR_EL1 fields</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v3] arm64: errata: Work around AmpereOne's erratum AC04_CPU_23</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-08</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是针对 AmpereOne AC04 处理器的错误（erratum AC04_CPU_23）提出的补丁（patch）。该补丁旨在解决在更新 HCR_EL2 时可能导致的数据地址翻译损坏问题，具体而言，只有由加载/存储指令发起的翻译会受到影响。补丁建议在对 HCR_EL2 进行存储前插入数据同步屏障（DSB），并在之后插入指令同步屏障（ISB），以防止指令在错误窗口内执行。<br><br>在之前的讨论中，参与者 D Scott Phillips 提出了补丁的初步版本，并得到了 Oliver Upton 的认可，认为补丁整体良好，但需要在文档中添加相应的条目。Oliver 表示会在补丁中进行必要的修改。<br><br>在本周的新讨论中，D Scott 对 Oliver 的反馈表示歉意，并承诺会修复遗漏的文档条目。这表明补丁的完善工作仍在继续，参与者之间的沟通顺畅，预计将很快完成补丁的最终版本。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-08]</span> <span class="email-subject">[PATCH v3] arm64: errata: Work around AmpereOne's erratum AC04_CPU_23</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: D Scott Phillips <span class="email-sender">&lt;scott@os.amperecomputing.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-09]</span> <span class="email-subject">Re: [PATCH v3] arm64: errata: Work around AmpereOne's erratum
+ AC04_CPU_23</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Oliver Upton <span class="email-sender">&lt;oliver.upton@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH v3] arm64: errata: Work around AmpereOne's erratum
+ AC04_CPU_23</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: D Scott Phillips <span class="email-sender">&lt;scott@os.amperecomputing.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH for-10.1 v5 02/13] arm/cpu: Store aa64isar0/aa64zfr0 into
+ the idregs arrays</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>3 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-13</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于一个针对 ARM 架构的补丁，旨在将 `aa64isar0` 和 `aa64zfr0` 寄存器的值存储到 ID 寄存器数组中。补丁的编号为「[PATCH for-10.1 v5 02/13]」。<br><br>在之前的讨论中，参与者 Cornelia Huck 提到该补丁在 KVM 被禁用或在目标架构上不可用时会导致构建失败，具体错误信息显示在 `cpu-sysregs.h` 文件中，涉及到一个被标记为“有毒”的宏 `CONFIG_KVM`。这表明在没有 KVM 支持的情况下，代码无法正常编译。<br><br>本周的新讨论中，Daniel P. Berrangé 回复称他已经在 v6 版本中修复了这个问题，表明他对补丁进行了改进。此外，Daniel 还提到他在测试 v5 版本时发现了这个问题，并确认 v5 版本可以与 KVM CPU 模型系列一起应用。<br><br>总的来说，本周的讨论集中在补丁的构建问题及其修复进展上，显示出开发者们对 ARM 架构支持的持续关注与改进。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH for-10.1 v5 02/13] arm/cpu: Store aa64isar0/aa64zfr0 into
+ the idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH for-10.1 v5 02/13] arm/cpu: Store aa64isar0/aa64zfr0
+ into the idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Cornelia Huck <span class="email-sender">&lt;cohuck@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">Re: [PATCH for-10.1 v5 02/13] arm/cpu: Store aa64isar0/aa64zfr0 into
+ the idregs arrays</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Daniel =?utf-8?B?UC4gQmVycmFuZ8Op?= <span class="email-sender">&lt;berrange@redhat.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>2 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的一个补丁，具体内容为移除对 ICH_LR<n>.EOI 的清除操作，前提是 ICH_LR<n>.HW 等于 1。补丁的目的在于简化代码，因为在这种情况下，ICH_LR<n>.HW 的第 41 位仅是 pINTID 的一部分，并不代表 EOI（End of Interrupt）信号，而该位会在后续清除 ICH_LR_PHYS_ID_MASK 时被自动清零，因此不需要额外的清除操作。<br><br>在历史讨论中并没有相关的内容，邮件中只有本周的新讨论。Wei-Lin Chang 提出了该补丁，并解释了其背景和目的。Marc Zyngier 随后确认已将该补丁应用到下一个版本中，并表示感谢。<br><br>总结来说，本周的讨论主要集中在补丁的提出和确认上，补丁旨在优化代码并消除不必要的操作，已被接受并应用。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Wei-Lin Chang <span class="email-sender">&lt;r09922117@csie.ntu.edu.tw&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [PATCH] KVM: arm64: nv: Remove clearing of ICH_LR<n>.EOI if ICH_LR<n>.HW == 1</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4] arm64: errata: Work around AmpereOne's erratum AC04_CPU_23</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>1 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-13</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是针对AmpereOne AC04处理器的错误修复，具体是关于其erratum AC04_CPU_23的工作绕过方案。该问题涉及到在进行HCR_EL2寄存器更新时，可能会导致数据地址的同时翻译被破坏。为了解决这个问题，提出的补丁通过在更新HCR_EL2之前插入一个数据同步屏障（DSB），并在之后插入一个指令同步屏障（ISB），以确保旧指令和新指令不会在错误窗口内执行，从而避免数据损坏。<br><br>在本周的讨论中，D Scott Phillips提交了该补丁的第四版，并详细说明了补丁的实现细节及其必要性。补丁经过了Oliver Upton的审核，确保了其符合内核的标准。此外，补丁还对文档进行了更新，增加了对该错误的描述和相关配置选项的说明。<br><br>总体来看，本周的进展主要集中在补丁的完善和审核上，确保其能够有效解决AmpereOne AC04处理器的相关问题。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-13]</span> <span class="email-subject">[PATCH v4] arm64: errata: Work around AmpereOne's erratum AC04_CPU_23</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: D Scott Phillips <span class="email-sender">&lt;scott@os.amperecomputing.com&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>RFC</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[RFC PATCH v2 0/9] KVM: Enable Nested Virt selftests</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>10 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个关于 KVM（Kernel-based Virtual Machine）嵌套虚拟化的补丁系列，主要目的是启用嵌套虚拟化的自测试功能。补丁系列包含 9 个补丁，涉及对现有自测试的修改，以支持在 vEL2（虚拟扩展级别 2）上下文中运行。<br><br>**原始补丁内容**：<br>补丁系列的核心是使自测试能够在启用嵌套虚拟化（NV）的情况下工作，允许来宾代码在 vEL2 中运行。补丁中添加了命令行选项来启用 NV 测试，默认情况下这些测试是禁用的。<br><br>**之前讨论要点**：<br>在历史讨论中，补丁的初步版本（v1）已被提出，开发者根据反馈更新了 NV 辅助函数，并修改了现有测试用例以支持在 vEL2 中运行。<br><br>**本周新讨论与进展**：<br>本周的讨论集中在补丁的具体实现上，开发者 Ganapatrao Kulkarni 提交了 10 封邮件，详细介绍了每个补丁的内容和修改。其中包括：<br>1. 添加了支持在 vEL2 中运行的简单测试。<br>2. 启用超时器测试、AArch32 ID 寄存器测试、VGIC 测试等在 vEL2 中运行。<br>3. 修改了页面故障测试以支持 NV。<br>4. 讨论了如何在不同的测试中启用或禁用 NV。<br><br>总体来看，本周的讨论显示了补丁的逐步完善，开发者积极响应反馈并进行调整，以确保嵌套虚拟化自测试的有效性和稳定性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 0/9] KVM: Enable Nested Virt selftests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 1/9] KVM: arm64: nv: selftests: Add support to run guest code in vEL2.</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 2/9] KVM: arm64: nv: selftests: Add simple test to run guest code in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 3/9] KVM: arm64: nv: selftests: Enable hypervisor timer tests to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 4/9] KVM: arm64: nv: selftests: enable aarch32_id_regs test to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 5/9] KVM: arm64: nv: selftests: Enable vgic tests to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 6/9] KVM: arm64: nv: selftests: Enable set_id_regs test to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 7/9] KVM: arm64: nv: selftests: Enable test to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 8/9] KVM: selftests: arm64: Extend kvm_page_table_test to run guest code in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 9/9] KVM: arm64: nv: selftests: Enable page_fault_test test to run in vEL2</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ganapatrao Kulkarni <span class="email-sender">&lt;gankulkarni@os.amperecomputing.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[RFC PATCH v2 0/3] KVM: arm64: Don't claim MTE_ASYNC if not supported</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>5 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个针对 KVM（Kernel-based Virtual Machine）在 arm64 架构中处理 MTE（Memory Tagging Extension）功能的补丁系列，主要目的是确保在不支持 MTE_ASYNC 的情况下，不会错误地向虚拟机报告该功能。<br><br>**原始补丁内容**：<br>补丁系列的核心是修复 KVM 在处理 ID_AA64PFR1_EL1.MTE_frac 字段时的行为。该字段在当前实现中被隐藏，导致在某些情况下虚拟机错误地认为 MTE_ASYNC 功能是支持的。<br><br>**之前讨论要点**：<br>在历史讨论中，参与者指出 KVM 目前对 MTE_frac 字段的处理不当，可能导致虚拟机在不支持 MTE_ASYNC 的情况下仍然显示该功能可用。Linux 内核本身并未检查 MTE_frac 字段，假设只要支持 MTE，就可以生成 MTE 异步故障。<br><br>**本周新讨论及进展**：<br>本周的讨论中，Ben Horgan 提出了三个补丁，分别是：<br>1. 使 MTE_frac 字段对 KVM 可见。<br>2. 根据 MTE 能力条件性地处理 MTE_frac 的掩码。<br>3. 增加自测以确保暴露 MTE_frac 不会破坏迁移功能。<br><br>Marc Zyngier 在最后一封邮件中确认已将这些补丁应用到下一个版本中，表示感谢。整体来看，这些补丁的实施将改善 KVM 在处理 MTE 功能时的准确性和稳定性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 0/3] KVM: arm64: Don't claim MTE_ASYNC if not supported</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 1/3] arm64/sysreg: Expose MTE_frac so that it is visible to KVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 2/3] KVM: arm64: Make MTE_frac masking conditional on MTE capability</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[RFC PATCH v2 3/3] KVM: selftests: Confirm exposing MTE_frac does not break migration</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-16]</span> <span class="email-subject">Re: [RFC PATCH v2 0/3] KVM: arm64: Don't claim MTE_ASYNC if not supported</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="category">
+            <h2>Other</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[kvm-unit-tests PATCH v3 00/16] arm/arm64: Add kvmtool to the runner script</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>13 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-05-07</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了一个针对 KVM 单元测试的补丁系列，主要目的是将 kvmtool 添加到测试运行脚本中，以支持 ARM 和 ARM64 架构的自动化测试。<br><br>**原始补丁内容**：<br>补丁系列的核心是允许用户通过简单的命令行配置来自动运行所有测试，具体命令为 `./configure --target=kvmtool`，接着执行 `make` 和 `./run_tests.sh`。kvmtool 相较于 qemu 更小且易于修改，适合开发者在 KVM 中添加或原型新特性。<br><br>**之前讨论要点**：<br>历史讨论中，Alexandru Elisei 提出了多个补丁，涉及到将 kvmtool 的支持整合到现有的测试框架中，包括重命名参数以适应 kvmtool 的语法、增加新的测试参数、文档更新等。这些补丁为 kvmtool 的集成奠定了基础。<br><br>**本周新讨论及进展**：<br>在本周的讨论中，参与者 Shaoqin Huang 对之前的补丁进行了审核，并逐一确认了每个补丁的有效性，均表示“已审核通过”。这表明补丁的整合工作进展顺利，预计将很快被合并到主干代码中。整体来看，讨论氛围积极，推动了 kvmtool 支持的实现。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 00/16] arm/arm64: Add kvmtool to the runner script</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 01/16] scripts: unittests.cfg: Rename 'extra_params' to 'qemu_params'</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 02/16] scripts: Add 'test_args' test definition parameter</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 04/16] run_tests.sh: Document --probe-maxsmp argument</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 05/16] scripts: Document environment variables</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 06/16] scripts: Refuse to run the tests if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-05-07]</span> <span class="email-subject">[kvm-unit-tests PATCH v3 07/16] scripts: Use an associative array for qemu argument names</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Alexandru Elisei <span class="email-sender">&lt;alexandru.elisei@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 01/16] scripts: unittests.cfg: Rename
+ 'extra_params' to 'qemu_params'</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 02/16] scripts: Add 'test_args' test
+ definition parameter</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 04/16] run_tests.sh: Document
+ --probe-maxsmp argument</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 05/16] scripts: Document environment
+ variables</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 06/16] scripts: Refuse to run the tests
+ if not configured for qemu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-14]</span> <span class="email-subject">Re: [kvm-unit-tests PATCH v3 07/16] scripts: Use an associative array
+ for qemu argument names</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Shaoqin Huang <span class="email-sender">&lt;shahuang@redhat.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[syzbot] [kvmarm?] KASAN: invalid-access Read in kvm_vgic_set_owner</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>1 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-05-12</span>
+                </div>
+
+                <div class="ai-summary">
+                    本周的讨论围绕一个由 syzbot 发现的 KASAN（Kernel Address Sanitizer）错误，具体是在 `kvm_vgic_set_owner` 函数中发生的无效访问。该问题出现在 Linux 内核的 ARM64 虚拟化模块中，涉及到内核在处理虚拟 CPU 时的锁定机制。错误报告显示，内核在尝试读取一个无效地址时发生了内存访问异常，导致系统崩溃。<br><br>在历史讨论中，没有提供相关的补丁或先前的讨论内容，因此这次讨论主要集中在错误的描述和影响上。syzbot 提供了详细的错误信息，包括调用栈和内存地址，帮助开发者定位问题。<br><br>本周的讨论没有新的进展或解决方案，syzbot 仍在跟踪此问题，并鼓励开发者在修复后添加相应的标签以便于后续管理。总的来说，当前的讨论主要是对该问题的确认和记录，尚未有具体的修复措施提出。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-05-12]</span> <span class="email-subject">[syzbot] [kvmarm?] KASAN: invalid-access Read in kvm_vgic_set_owner</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: syzbot <span class="email-sender">&lt;syzbot+9993ad918a0b1c0af91c@syzkaller.appspotmail.com&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

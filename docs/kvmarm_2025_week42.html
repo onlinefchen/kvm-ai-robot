@@ -206,9 +206,9 @@
         <h1>KVMARM Mailing List Analysis Report</h1>
 
         <div class="meta-info">
-            <p><strong>Generated:</strong> 2025-10-22 15:35</p>
+            <p><strong>Generated:</strong> 2025-10-27 13:08</p>
             <p><strong>Time Period:</strong> 2025年10月 第42周 (10/13 - 10/19)</p>
-            <p><strong>Total Messages:</strong> 155 | <strong>Total Threads:</strong> 29</p>
+            <p><strong>Total Messages:</strong> 152 | <strong>Total Threads:</strong> 28</p>
             <p style="text-align: center;"><a href="archive.html" class="archive-link">📚 历史归档 Archive</a></p>
         </div>
 
@@ -228,7 +228,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 28 封邮件，2 位参与者。<br><br>📋 补丁内容：Add the async_ioctl() => unlocked_ioctl() patches, and use the "unlocked"<br>   variant in the TDX vCPU sub-ioctls so they can take kvm->lock outside of<br>   vcpu->mutex...<br><br>🔑 关键讨论点：<br>• ne small question:<br> : ><br> : > What if the memory region passed to KVM_TDX_INIT_MEM_REGION hasn't been pre-<br> : > populated?...<br>• Or we can make KVM_TDX_INIT_MEM_REGION<br> : > return error when it finds the region hasn't been pre-populated?...<br>• u, u64 gpa)<br>-{<br>-	struct kvm *kvm = vcpu->kvm;<br>-	bool is_direct = kvm_is_addr_direct(kvm, gpa);<br>-	hpa_t root = is_direct ?...<br><br>💬 这是一个非常活跃的讨论，有 28 封邮件往来。
+                    本邮件线程讨论了针对 KVM 的一系列补丁，主要集中在 TDX（Trust Domain Extensions）相关的清理和改进上。<br><br>1. **原始补丁内容**：补丁系列的核心是对 KVM 的 TDX 后处理路径进行清理，解决在 gmem 和 TDX 的后处理钩子之间的锁定问题，并确保 KVM 内部路径的互斥性。补丁还将 `kvm_arch_vcpu_async_ioctl()` 改为强制性支持，并重命名为 `kvm_arch_vcpu_unlocked_ioctl()`。<br><br>2. **之前讨论要点**：在历史讨论中，补丁的初步版本（v1 和 v2）收集了多位开发者的反馈，主要集中在代码的清晰性和互斥性问题上。开发者们讨论了如何更好地管理锁定，以避免潜在的竞争条件。<br><br>3. **本周的新讨论与进展**：本周的讨论中，补丁 v3 版本被提交，包含了对多个函数的重命名和功能改进。补丁得到了 Claudio Imbrenda 的认可，并且多个补丁在邮件中得到了 "Acked-by" 的确认。此外，补丁系列还引入了新的宏和类，以简化锁定管理，确保在处理 TDX 状态转换时的安全性。<br><br>总体来看，这些补丁旨在提升 KVM TDX 的稳定性和性能，同时减少代码复杂性，确保在多线程环境下的安全性。
                 </div>
 
                 <h4>Message List</h4>
@@ -291,7 +291,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 27 封邮件，4 位参与者。<br><br>📋 补丁内容：add a new iterator<br>macros in ...<br><br>💬 这是一个非常活跃的讨论，有 27 封邮件往来。
+                    本邮件线程讨论了一个关于 KVM（Kernel-based Virtual Machine）中 `guest_memfd` 的补丁系列，主要目的是为其添加 NUMA（非统一内存访问）内存策略支持。<br><br>1. **原始补丁内容**：<br>   该补丁系列（PATCH v13 00/12）旨在增强 `guest_memfd` 的功能，使其支持 NUMA 记忆策略。这将允许 KVM 在虚拟机中更智能地分配内存，优化性能。<br><br>2. **之前讨论要点**：<br>   在历史讨论中，补丁经过多次版本迭代，逐步完善了对 NUMA 策略的支持，包括修复了一些代码中的错误，增加了测试功能，并重命名了结构体以提高代码的可读性。参与者们一致认为在合并补丁时应进行适当的测试，但也有观点认为可以在没有测试的情况下进行合并。<br><br>3. **本周的新讨论与进展**：<br>   本周的讨论集中在补丁的具体实现细节上，包括对 `gmem_inode` 结构的改进、内存分配策略的实现以及自测功能的扩展。参与者们对补丁的各个部分进行了审查和测试，确保其功能的正确性和稳定性。此外，讨论中还提到了一些代码格式化的自动化问题，参与者们对如何处理这些格式化问题表达了不同的看法。<br><br>总体而言，本周的讨论表明该补丁系列在功能实现上取得了显著进展，参与者们积极参与审查和测试，确保最终合并的代码质量。
                 </div>
 
                 <h4>Message List</h4>
@@ -347,41 +347,6 @@
 
             <div class="thread">
                 <div class="thread-header">
-                    <h3>[PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support</h3>
-                </div>
-
-                <div class="thread-meta">
-                    <span>8 messages</span>
-                    <span>3 participants</span>
-                    <span>Started: 2025-10-07</span>
-                </div>
-
-                <div class="ai-summary">
-                    本 thread 共有 8 封邮件，3 位参与者。<br><br>📋 补丁内容：this series (I want to keep this<br>version KVM focused, and AFAICT there is nothing left to discuss in the prep<br>paches)...<br><br>🔑 关键讨论点：<br>• {<br>+#ifdef CONFIG_NUMA<br>+	struct mempolicy *mpol;<br>+<br>+	mpol = mpol_shared_policy_lookup(&gi->policy, index);<br>+	return mpol ?...<br>• com> writes:<br><br><br>How about kvm_gmem_get_index_policy() instead, since the policy is keyed<br>by index?...<br>• Should we be returning NULL if no shared policy was defined?...<br><br>💬 讨论有 8 轮回复。
-                </div>
-
-                <h4>Message List</h4>
-                <div class="email-list">
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-07]</span> <span class="email-subject">[PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-07]</span> <span class="email-subject">[PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-09]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ackerley Tng <span class="email-sender">&lt;ackerleytng@google.com&gt;</span></div>
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Garg, Shivank <span class="email-sender">&lt;shivankg@amd.com&gt;</span></div>
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ackerley Tng <span class="email-sender">&lt;ackerleytng@google.com&gt;</span></div>
-<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-10-13]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Garg, Shivank <span class="email-sender">&lt;shivankg@amd.com&gt;</span></div>
-<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-10-15]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
- shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
-                </div>
-            </div>
-
-            <div class="thread">
-                <div class="thread-header">
                     <h3>[PATCH 0/3] KVM: arm64: Fix handling of ID_PFR1_EL1.GIC</h3>
                 </div>
 
@@ -392,7 +357,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 8 封邮件，2 位参与者。<br><br>📋 补丁内容：Peter reported[1] that restoring a GICv2 VM fails badly, and correctly<br>points out that ID_PFR1_EL1.GIC isn't writable, while its 64bit<br>equivalent is. I broke that in 6.12....<br><br>💬 讨论有 8 轮回复。
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下对 ID_PFR1_EL1.GIC 寄存器的处理修复。原始的 patch 包含三部分，旨在解决 Peter Maydell 报告的问题，即在恢复 GICv2 虚拟机时出现故障，原因是 ID_PFR1_EL1.GIC 寄存器不可写，而其 64 位等效寄存器是可写的。Marc Zyngier 提出了修复方案，包括将 ID_PFR1_EL1.GIC 设置为可写、在配置 GICv3 时设置相关 ID 寄存器，以及限制对这些寄存器的清除操作。<br><br>在之前的讨论中，Marc 指出修复 ID 寄存器的运行时处理并不理想，建议在 GIC 创建时进行调整。通过这次修复，Marc 能够在他的 Synquacer 上成功保存和恢复 GICv2 虚拟机。<br><br>本周的新讨论中，Marc 提交了三份补丁，分别针对上述问题进行了具体的代码修改。补丁内容包括：<br>1. 使 ID_PFR1_EL1.GIC 可写。<br>2. 在配置 GICv3 时直接设置 ID 寄存器，避免运行时清除。<br>3. 限制对 ID 寄存器的清除操作，仅在用户空间的 irqchip 中进行。<br><br>此外，Ben Horgan 提出了关于 set_id_regs 的清理补丁，旨在优化自测试代码并移除不再使用的定义。整体来看，本周的讨论集中在修复和优化 KVM 的 ID 寄存器处理上，推动了相关功能的稳定性和性能提升。
                 </div>
 
                 <h4>Message List</h4>
@@ -410,6 +375,39 @@
 
             <div class="thread">
                 <div class="thread-header">
+                    <h3>[PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>7 messages</span>
+                    <span>3 participants</span>
+                    <span>Started: 2025-10-07</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论的主题是关于 KVM（Kernel-based Virtual Machine）中 guest_memfd 的 NUMA（非统一内存访问）内存策略支持的补丁（PATCH v12 00/12）。该补丁的目的是增强虚拟机管理程序（VMM）对内存分配的控制，特别是在 NUMA 环境下的内存放置。<br><br>在历史讨论中，参与者们探讨了补丁的实现细节，特别是如何通过实现 vm_ops 来支持 guest-memfd 的 mmap 操作，从而允许 VMM 使用 mbind() 设置所需的 NUMA 策略。讨论中提到，之前的内存分配方式依赖于本地 NUMA 节点 ID，导致内存分配不稳定。参与者们还讨论了返回 NULL 的策略，以保持与当前 cpuset_do_page_mem_spread() 的一致性。<br><br>在本周的新讨论中，Sean Christopherson 和 Ackerley Tng 进一步探讨了函数命名的问题，认为在函数名中包含“index”是多余的，建议使用更简洁的命名方式。同时，Shivank 对补丁进行了修正，进一步推动了讨论的进展。总体来看，本周的讨论集中在补丁的命名和实现细节的优化上，推动了 NUMA 策略支持的完善。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-07]</span> <span class="email-subject">[PATCH v12 00/12] KVM: guest_memfd: Add NUMA mempolicy support</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-07]</span> <span class="email-subject">[PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-09]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ackerley Tng <span class="email-sender">&lt;ackerleytng@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Garg, Shivank <span class="email-sender">&lt;shivankg@amd.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ackerley Tng <span class="email-sender">&lt;ackerleytng@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-10-15]</span> <span class="email-subject">Re: [PATCH v12 05/12] KVM: guest_memfd: Enforce NUMA mempolicy using
+ shared policy</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
                     <h3>[PATCH] arm64: Revamp HCR_EL2.E2H RES1 detection</h3>
                 </div>
 
@@ -420,7 +418,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 7 封邮件，4 位参与者。<br><br>📋 补丁内容：implement FEAT_VHE<br>and not FEAT_E2H0:<br><br>- either they advertise it via ID_AA64MMFR4_EL1...<br><br>💬 讨论有 7 轮回复。
+                    本邮件列表讨论的主题是关于对 ARM64 架构中 HCR_EL2.E2H RES1 检测的修订补丁（PATCH）。该补丁旨在改进当前识别仅实现 FEAT_VHE 而不实现 FEAT_E2H0 的 CPU 的方式，特别是在某些 CPU 上的 ID_AA64MMFR4_EL1 寄存器访问可能会导致不确定性的问题。<br><br>在历史讨论中，Marc Zyngier 提出了补丁的背景，指出了现有方法的局限性。Oliver Upton 表达了对该补丁的支持，并表示愿意处理其向稳定版本的回溯。Mark Rutland 也提到计划将相关补丁回溯到早期内核版本，以解决在特定硬件上运行稳定版本时出现的问题。<br><br>在本周的新讨论中，Catalin Marinas 对补丁表示认可，并确认其已被应用。Marc Zyngier 进一步确认补丁已被纳入修复列表，并提供了相关的提交信息。Mark Rutland 表示他对补丁的直接应用持谨慎态度，强调了回溯到稳定版本的复杂性，并表示愿意提供帮助。<br><br>总体来看，本周的讨论确认了补丁的应用，并为后续的稳定版本回溯提供了支持。
                 </div>
 
                 <h4>Message List</h4>
@@ -447,7 +445,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 6 封邮件，2 位参与者。<br><br>📋 补丁内容：This series first introduces a new generic way of creating remote events and<br>remote buffers...<br><br>🔑 关键讨论点：<br>• racefs(struct dentry *d, void *unused)<br>+{<br>+	return tracefs_create_file("write_event", 0200, d, NULL, &write_event_fops) ?...<br>• Do you want a v8 now (and with your previous comment) or shall I wait a bit more?...<br><br>💬 讨论有 6 轮回复。
+                    本邮件线程讨论了针对 pKVM 的 Tracefs 支持的补丁（PATCH v7 00/28），旨在为保护模式下的虚拟化提供调试和分析工具。该补丁系列引入了 Tracefs，因其易于使用且支持多种工具，适合用于内核与虚拟化监控之间的事件追踪。<br><br>在历史讨论中，Vincent Donnefort 提出了补丁的初步内容，包括添加一个用于测试的 trace remote 模块，该模块利用简单环形缓冲区来记录事件，并允许用户空间触发测试事件。<br><br>在本周的新讨论中，Steven Rostedt 提出了一些具体问题，包括补丁在构建时遇到的未定义符号错误，指出需要调整配置以解决问题。Vincent 随后确认需要导出符号，并表示将稍后更新补丁以解决这些问题。整体来看，讨论集中在补丁的构建问题和后续改进上，参与者们积极交流以推动补丁的完善。
                 </div>
 
                 <h4>Message List</h4>
@@ -473,7 +471,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 6 封邮件，2 位参与者。<br><br>📋 补丁内容：This patch series adds ARM64 support for the KVM_PRE_FAULT_MEMORY<br>feature, which was previously only available on x86 [1]...<br><br>🔑 关键讨论点：<br>• erspace_mem_region_add(vm, VM_MEM_SRC_ANONYMOUS,<br>-				    guest_test_phys_mem, TEST_SLOT, TEST_NPAGES,<br>-				    private ?...<br>• test_num_pages,<br>+				    p->private ?...<br>• test_num_pages,<br> 				    p->private ?...<br><br>💬 讨论有 6 轮回复。
+                    本邮件线程讨论了一个关于 KVM ARM64 的补丁系列，主要是添加对 KVM_PRE_FAULT_MEMORY 功能的支持。该功能之前仅在 x86 上可用，旨在减少执行过程中的 stage-2 故障，特别是在内存密集型应用的后复制迁移场景中，能够降低延迟。<br><br>**原始补丁内容**：<br>补丁系列包括四个部分：<br>1. 添加 ARM64 的 KVM_PRE_FAULT_MEMORY ioctl 支持。<br>2. 修复自测中的未对齐 mmap 分配问题。<br>3. 更新 pre_fault_memory_test 以支持 ARM64。<br>4. 扩展测试以涵盖不同的虚拟机内存后备类型。<br><br>**之前讨论要点**：<br>之前的讨论主要集中在补丁的实现细节和对现有功能的影响上。补丁在处理阶段2 故障逻辑时，确保不传递预故障标志，并去除了重试循环。<br><br>**本周新讨论与进展**：<br>本周的讨论中，Jack Thomson 提出了补丁的详细实现，并针对自测进行了多项更新，以确保其在 ARM64 上的兼容性。Suzuki K Poulose 对补丁提出了反馈，询问是否需要考虑超出请求范围的故障处理，并建议在未来的补丁中传递页面大小作为输入参数，以限制使用的 vma 页面大小。此外，他还提出了一个小的改进建议，询问为何不使用 ESR_ELx_EC_DABT_LOW。整体来看，补丁得到了积极的反馈，并在进一步讨论中不断完善。
                 </div>
 
                 <h4>Message List</h4>
@@ -499,7 +497,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 5 封邮件，3 位参与者。<br><br>📋 补丁内容：We forgot to sync several registers (ID_AA64PFR1, MPIDR, CLIDR) in guest to<br>make sure that the guest had seen the written value....<br><br>🔑 关键讨论点：<br>• Hi Zenghui,<br><br>On 10/12/25 16:43, Zenghui Yu wrote:<br><br>Why did you choose this position in the list for these 2?...<br>• How about adding a ksft_test_result_pass("%s\n", __func__) and<br>bumping the number of tests?...
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试，主要涉及同步 ID_AA64PFR1、MPIDR 和 CLIDR 寄存器的补丁（patch）。<br><br>在历史讨论中，Zenghui Yu 提出了一个补丁，目的是确保虚拟机（guest）能够正确看到写入的寄存器值，补丁中增加了对这三个寄存器的同步操作。补丁已被提交并包含在自测试代码中。<br><br>在本周的新讨论中，参与者 Ben Horgan 对补丁表示认可，并提出了一个建议，建议在运行测试时增加输出信息，以便更好地显示测试结果。此外，Marc Zyngier 确认已将该补丁应用于修复列表，并感谢 Zenghui 的贡献。Zenghui 也对此表示同意，确认没有对寄存器顺序的限制，并希望保持与其他测试的一致性。<br><br>总体来看，本周的讨论主要集中在补丁的审查和建议改进上，补丁已成功应用，并得到了积极的反馈。
                 </div>
 
                 <h4>Message List</h4>
@@ -527,7 +525,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 5 封邮件，2 位参与者。<br><br>📋 补丁内容：implement SIGBUS on arm64 as well, but<br>  Marc preferred KVM exit over signal [3]...<br><br>🔑 关键讨论点：<br>• in firmware");<br>+<br>+	if (access(EINJ_ETYPE, R_OK | W_OK) == -1)<br>+		ksft_test_result_skip("EINJ module probably not loaded?...<br>• Above needs an ending like '.' or ':'....
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）如何处理虚拟机中的同步外部中止（SEA）。原始的补丁集（PATCH v4 0/3）提出了一种新方法，允许 VMM（虚拟机监控器）在 APEI（高级平台错误接口）无法处理 SEA 时，通过 KVM_EXIT_ARM_SEA 将控制权返回给用户空间。这一方法旨在优雅地处理因可恢复的未更正内存错误（UER）引起的 SEA，避免直接注入异步 SError 导致的虚拟机内核崩溃。<br><br>在历史讨论中，KVM 传统上将 SEA 委托给 APEI 处理，但并非所有平台都支持此功能，导致 KVM 只能通过注入 SError 作为后备方案。补丁集的主要改进在于引入了 KVM_CAP_ARM_SEA_TO_USER 和 KVM_EXIT_ARM_SEA 两个新特性，允许用户空间在处理 SEA 时获取更多信息。<br><br>本周的新讨论中，Jiaqi Yan 提供了补丁的详细实现，包括自测试用例，验证 KVM 在 APEI 无法处理 SEA 时，是否能正确返回 KVM_EXIT_ARM_SEA，并提供相关的错误信息。此外，文档也更新了关于新用户空间 API 的说明，强调用户空间可以通过 KVM_SET_VCPU_EVENTS 等方法来处理 SEA，从而限制错误影响的范围。<br><br>总的来说，此次讨论聚焦于增强 KVM 对 SEA 的处理能力，以提高虚拟机的稳定性和可靠性。
                 </div>
 
                 <h4>Message List</h4>
@@ -553,7 +551,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 4 封邮件，2 位参与者。<br><br>📋 补丁内容：On Fri, Sep 26, 2025, Sandipan Das wrote:...<br><br>🔑 关键讨论点：<br>• The function name kvm_need_pmc_intercept() seems a little bit misleading...<br>• Maybe something like kvm_need_any_pmc_intercept()?...<br>• Yeah, I don't love kvm_need_pmc_intercept() either.  But kvm_need_global_intercept()...
+                    本邮件线程讨论的是一个关于 KVM（内核虚拟机）中 PMU（性能监控单元）相关的补丁，主题为“禁用对选择性 PMU MSRs 的拦截以支持中介 vPMUs”。该补丁的目的是优化虚拟机对性能监控的处理，确保在中介虚拟化环境中，主机和客机的性能计数器能够正确工作。<br><br>在历史讨论中，参与者 Sean Christopherson 和 Dapeng Mi 针对补丁中的函数命名提出了意见。Sean 指出 `kvm_need_pmc_intercept()` 这个函数名可能会误导用户，建议将其更名为 `kvm_need_global_intercept()`，以更准确地反映其功能。Dapeng 也表示同意这一观点，并提出了其他命名建议。<br><br>在本周的新讨论中，Sean 和 Dapeng 继续探讨函数命名问题，Dapeng 提出了一个新的建议，即将函数名改为 `kvm_need_any_pmc_intercept()`，以避免与其他函数名过于相似。Sean 对这个新建议表示赞同，并感谢 Dapeng 的贡献。<br><br>总体来看，本周的讨论主要集中在函数命名的优化上，参与者们达成了一致意见，推动了补丁的进一步完善。
                 </div>
 
                 <h4>Message List</h4>
@@ -581,7 +579,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 4 封邮件，1 位参与者。<br><br>🔑 关键讨论点：<br>• d)<br> {<br>-	return read_tcr() & TCR_DS;<br>+	return read_tcr() & TCR_EL1_DS;<br> }<br> <br> #define PTE_MAYBE_SHARED	(lpa2_is_enabled() ?...
+                    本邮件讨论的主题是关于对 ARM64 架构中 TCR_EL1 字段宏的清理和更新，主要涉及三个补丁（PATCH V6 0/3）。<br><br>**原始补丁内容**：<br>补丁的主要目的是清理分散在 ARM64 平台代码（包括 KVM 实现）中的 TCR_EL1 字段宏，通过更新所需的寄存器字段定义，并将所有相关的 TCR_XXX 宏从 `asm/pgtable-hwdef.h` 移动到 KVM 头文件 `asm/kvm_arm.h` 中，以便在 KVM 中继续使用。这一清理不会引入任何功能上的变化。<br><br>**之前讨论要点**：<br>在之前的版本中，补丁经历了多次修改，包括将工具头文件和 KVM 的更改分开、删除未使用的宏、以及根据 KVM 的需求调整 TCR_XXX 标志的表达方式。<br><br>**本周的新讨论和进展**：<br>本周的讨论中，Anshuman Khandual 提交了三个补丁的具体实现：<br>1. 第一个补丁替换了 TCR_NFD[0|1] 宏，使用工具 sysreg 格式中的字段定义。<br>2. 第二个补丁则将所有使用的 TCR_EL1 字段宏替换为工具 sysreg 变体，并从 `pgtable-hwdef.h` 中删除了这些宏。<br>3. 第三个补丁将所有需要的 TCR_XXX 宏移动到 KVM 头文件中，确保其在 KVM 中的持续使用。<br><br>这些补丁的提交标志着对 ARM64 TCR_EL1 字段宏的清理工作向前迈出了重要一步。
                 </div>
 
                 <h4>Message List</h4>
@@ -605,7 +603,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。<br><br>📋 补丁内容：Fix by left-shifting the vCPU parameter received by its_send_mapc_cmd<br>16 bits before passing it into its_encode_target for encoding...
+                    本邮件讨论的主题是针对 KVM 自测框架中的一个补丁，旨在修复 vgic_lpi_stress 测试中 ITS 收集目标地址的处理问题。<br><br>1. **原始补丁内容**：补丁由 Maximilian Dittgen 提交，主要修复了在 vgic_lpi_stress 中将 vCPU ID 作为目标地址传递给 its_send_mapc_cmd() 的问题。原代码直接使用 vCPU ID，导致在编码时右移 16 位后所有 vCPU ID 都变为 0，最终使得所有中断都被处理为 vCPU 0。补丁通过在传递前将 vCPU ID 左移 16 位来解决此问题。<br><br>2. **之前讨论要点**：在历史讨论中，未提及具体的补丁或问题，因此本次讨论主要集中在补丁的必要性和实现上。<br><br>3. **本周的新讨论与进展**：本周的讨论包括 Maximilian 对补丁的详细说明和调试结果，展示了补丁应用前后的日志变化，确认了修复的有效性。Marc Zyngier 进一步补充了 KVM ITS 模拟代码的背景信息，指出使用线性 CPU 编号进行 redistributor 地址映射的重要性，强调了补丁的合理性。<br><br>总体而言，本次讨论围绕补丁的提出、实现及其对 KVM 测试框架的影响展开，显示了开发者对多 vCPU 测试的关注和对代码质量的重视。
                 </div>
 
                 <h4>Message List</h4>
@@ -627,7 +625,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。<br><br>📋 补丁内容：Fix the<br>allocation by using the correct size...
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的自测试中，如何正确分配虚拟 CPU（vcpus）的内存。历史讨论中，Zenghui Yu 提出了一个补丁，指出当前的 vcpus 数组分配使用了过大的内存（nr_cpus * sizeof(struct kvm_vcpu)），建议修正为正确的大小，以优化内存使用。补丁修改了 `vgic_lpi_stress.c` 文件，进行了相应的代码调整。<br><br>在本周的新讨论中，Marc Zyngier 对该补丁表示感谢，并确认已将其应用于修复中。他提到补丁已成功提交，并附上了提交的哈希值（2192d348c0aa0cc2e7249dc3709f21bfe0a0170c），表明该问题已得到解决。<br><br>总结而言，补丁的目的是优化 vcpus 的内存分配，历史讨论中提出了具体的修改建议，而本周的进展则确认了补丁的应用，标志着问题的解决。
                 </div>
 
                 <h4>Message List</h4>
@@ -650,7 +648,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。
+                    本邮件讨论的主题是关于 KVM（内核虚拟机）在 arm64 架构下对 GICv3（通用中断控制器版本3）处理的一个补丁。补丁的主要内容是仅在运行 v2-on-v3 或 v3 类型的虚拟机时设置 ICH_HCR（中断控制器硬件配置寄存器）陷阱，以确保 GICv2 客户端不会接触到 GICv3 的相关特性。<br><br>在历史讨论中，Sascha Bischoff 提出了该补丁，解释了 ICH_HCR_EL2 陷阱的使用场景：在 GICv3 硬件上运行 GICv3 客户端时，陷阱用于特定情况的捕获，而在 GICv2 客户端上则确保其只能看到 GICv2 的部分，避免接触 GICv3 的特性。<br><br>在本周的新讨论中，Marc Zyngier 对该补丁表示感谢，并确认已将其应用于修复中，补丁的提交 ID 为 3193287ddffbce29fd1a79d812f543c0fe4861d1。这表明该补丁已被接受并将纳入后续的代码版本中。
                 </div>
 
                 <h4>Message List</h4>
@@ -673,7 +671,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。<br><br>📋 补丁内容：Update the GICv3<br>documentation to reflect this now that GICv3 guests are supports on<br>compatible GICv5 hosts...
+                    本邮件线程讨论了关于更新 KVM 文档以支持 GICv5 主机的补丁。历史讨论中，Sascha Bischoff 提出了一个补丁，内容是更新 GICv3 文档，以反映 GICv5 主机对 GICv3 虚拟机的支持。具体来说，GICv5 主机可选择性地包含 FEAT_GCIE_LEGACY 特性，使其能够在 GICv5 硬件上运行基于 GICv3 的虚拟机。补丁修改了相关文档，增加了两行信息并删除了一行。<br><br>在本周的新讨论中，Marc Zyngier 对该补丁进行了确认，并表示已将其应用于修复中，感谢 Sascha 的贡献。这表明该补丁已被接受并整合进文档中，进一步推动了对 GICv5 主机支持 GICv3 虚拟机的文档完善工作。
                 </div>
 
                 <h4>Message List</h4>
@@ -695,7 +693,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。<br><br>📋 补丁内容：vgic_lpi_stress rather hilariously leaves IRQs disabled for the duration<br>of the test. While the ITS translation of MSIs happens regardless of<br>this, for completeness the guest should actually handle th...
+                    本邮件线程讨论了一个关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下自测试的补丁，主题为“[PATCH] KVM: arm64: selftests: Actually enable IRQs in vgic_lpi_stress”。<br><br>在历史讨论中，Oliver Upton 提出了这个补丁，指出在 vgic_lpi_stress 测试中，IRQ（中断请求）被错误地禁用，导致测试不完整。补丁的目的是在测试过程中启用 IRQ，以确保来宾能够正确处理 LPI（本地中断）。补丁修改了相关的测试代码，增加了一行代码以启用 IRQ。<br><br>在本周的新讨论中，Marc Zyngier 对该补丁表示感谢，并确认已将其应用到修复列表中。这表明补丁得到了认可并将被纳入后续的代码更新中。<br><br>总结来说，补丁旨在修复 vgic_lpi_stress 测试中的中断处理问题，经过讨论后已被采纳并应用。
                 </div>
 
                 <h4>Message List</h4>
@@ -717,7 +715,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，1 位参与者。<br><br>📋 补丁内容：This series aims at fixing all of the above, moving the handling of<br>the timer sysregs to sys_regs...
+                    本邮件线程讨论了关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的定时器用户空间接口（UAPI）的去特殊化问题。历史讨论中，Marc Zyngier 提出了一个补丁（PATCH 00/13），旨在简化定时器寄存器的处理，消除与用户空间访问相关的复杂性和代码重复。补丁的背景是，早期在 KVM/arm64 移植过程中，定时器寄存器的处理未按照正常的系统寄存器流程进行，导致了额外的复杂性，尤其是在引入新的虚拟化（NV）功能后，EL0 定时器的处理被遗留。<br><br>在本周的新讨论中，Marc Zyngier 更新了补丁的进展，确认已将其应用于修复分支，并列出了补丁的具体提交内容，包括隐藏用户空间对某些寄存器的访问、引入新的帮助函数、以及将定时器相关的用户空间访问器移动到通用基础设施等。这些改动旨在提高代码的可维护性和一致性，进一步优化 KVM 的性能。
                 </div>
 
                 <h4>Message List</h4>
@@ -739,7 +737,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的 PMSCR_EL1 寄存器初始化问题。历史讨论中，Mukesh Ojha 提出了一个补丁（PATCH v2），旨在通过检查系统是否支持统计分析扩展（SPE）来保护 PMSCR_EL1 的初始化。之前的实现存在问题，可能导致在 VHE（Virtual Hypervisor Extensions）模式下启动时系统挂起，因为 EL3 并未将 Profiling Buffer 的访问权限委托给非安全世界。<br><br>在本周的新讨论中，Marc Zyngier 确认了 Mukesh 的补丁已被应用于修复列表，并表示感谢。这表明该补丁已获得认可并将解决之前提到的问题。<br><br>总结而言，本次讨论围绕 PMSCR_EL1 初始化的安全性展开，补丁通过增加 SPE 支持检查来避免系统启动时的潜在挂起问题，且已成功应用。
                 </div>
 
                 <h4>Message List</h4>
@@ -761,7 +759,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：On Thu, May 1, 2025 at 2:03 PM Sean Christopherson <seanjc@google.com> wrote:...
+                    本邮件主题为“[PATCH 00/10] KVM: selftests: Convert to kernel-style types”，涉及将 KVM 自测代码转换为内核风格的类型。邮件中没有提供具体的 patch 内容，但可以推测该 patch 旨在提升 KVM 自测代码的可读性和一致性。<br><br>在历史讨论部分，虽然没有具体的邮件记录，但可以推测该 patch 可能经过了初步的评审和讨论，参与者对其必要性和实现方式进行了交流。<br><br>在本周的新讨论中，David Matlack 回复了 Sean Christopherson，询问下一步的行动计划，并表示愿意根据需要重新提交新版本的 patch。这表明该 patch 仍在积极推进中，参与者对后续步骤持开放态度，期待进一步的指导和反馈。<br><br>总体来看，此次讨论集中在 KVM 自测代码的改进上，尽管没有详细的历史讨论记录，但当前的交流显示出对 patch 进展的关注和对后续工作的积极态度。
                 </div>
 
                 <h4>Message List</h4>
@@ -782,7 +780,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：update to fix as the RMM will need to in some cases<br>   emulate the PMU registers...
+                    本邮件讨论的主题是关于在 KVM 中支持 Arm CCA 的补丁（PATCH v11 00/42）。本周的讨论主要由 Steven Price 提出，他更新了补丁系列，并提供了相关的代码库链接。<br><br>在历史讨论中，补丁的目标是改进 KVM 的用户 API，使其更接近于“正常”的 KVM 操作，而不是直接暴露底层操作。具体来说，虚拟机监控器（VMM）将通过使用 guestmem_fd 功能来设置内存私有性，并在第一次运行虚拟 CPU 时配置领域（realm）和设置 RIPAS。这一变化旨在减少 VMM 支持 CCA 所需的修改，并由 KVM 处理领域设置的顺序要求。<br><br>本周的新进展包括：<br>1. Steven 指出，用户 API 的重大变化需要时间来原型化和完善细节。<br>2. 讨论了 PMU 处理中的灵活性问题，当前情况下主机无法在领域执行时维护 PMU 计数器，这可能需要更新规范来解决。<br>3. GIC 处理也存在限制，主机无法设置陷阱位，可能影响未来硬件解决方法的实现，同样需要规范更新。<br>4. Steven 提到了一些代码的具体改进，如符号命名的修正、硬件特性检查的增强、CAPs 的允许列表以及对 VGIC 处理的修复等。<br><br>总的来说，本周的讨论集中在补丁的重大变更、存在的问题以及代码的具体改进上。
                 </div>
 
                 <h4>Message List</h4>
@@ -803,7 +801,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：Verify the offset to prevent OOB access in the hypervisor<br>FF-A buffer in case an untrusted large enough value<br>[U32_MAX - sizeof(struct ffa_composite_mem_region) + 1, U32_MAX]<br>is set from the host kern...
+                    本次邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下对 FF-A（Firmware Framework for Arm）内存共享的补丁。该补丁的主要目的是验证偏移量，以防止在超管中出现越界访问（OOB），特别是在主机内核传递一个足够大的不可信值时，可能导致的安全问题。<br><br>在历史讨论中并没有提供具体的背景信息，因此我们无法得知之前是否有相关的讨论或补丁。邮件中只提到本周的补丁内容和目的。<br><br>本周的讨论由 Sebastian Ene 提出，补丁通过在 `__do_ffa_mem_xfer` 函数中增加对偏移量的检查，确保在进行内存传输时不会发生溢出。具体来说，补丁引入了一个新的变量 `checked_offset`，并在验证条件中使用它，以确保在计算偏移量时不会超出允许的范围。这一改动旨在提高系统的安全性，防止潜在的内存访问错误。<br><br>总的来说，本周的讨论集中在这个补丁的实现细节上，强调了内存安全的重要性，并提出了具体的代码修改建议。
                 </div>
 
                 <h4>Message List</h4>
@@ -824,7 +822,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：There's currently no verification for host issued ranges in most of the<br>pKVM memory transitions. The end boundary might therefore be subject to<br>overflow and later checks could be evaded....
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的内存过渡检查，特别是针对 pKVM 的内存转换。Vincent Donnefort 提出的补丁（patch）旨在增加对主机发起的内存范围参数的验证，以防止潜在的溢出问题和安全漏洞。<br><br>在历史讨论中，补丁的初衷是解决当前 pKVM 内存转换中缺乏对范围参数的验证的问题。补丁通过增加一个名为 `pfn_range_is_valid()` 的检查函数，确保物理页框号（PFN）和页数（nr_pages）的范围在有效的物理地址范围内，从而避免溢出情况的发生。补丁的演变过程中，版本更新中增加了对页数溢出的检查，并对函数进行了重命名。<br><br>在本周的新讨论中，Vincent 提交了补丁的第三版，强调了对物理地址范围的具体检查，并确保在使用来自不可信源的 PFN 和 nr_pages 之前进行验证。该补丁的实现将提升 pKVM 的安全性，防止潜在的内存访问错误。整体来看，本周的讨论集中在补丁的细节完善及其安全性增强上。
                 </div>
 
                 <h4>Message List</h4>
@@ -845,7 +843,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：On Wed, 24 Sep 2025 16:51:48 -0700, Oliver Upton wrote:...
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下处理 MDSCR_EL1 的 FGT（Fault Generation Traps）相关的补丁。原始的补丁包括两个部分：第一部分是计算每个虚拟 CPU 的 FGT，在 vcpu_load() 函数中实现；第二部分是当可用时，使用 MDSCR_EL1 的 FGT 写入陷阱。<br><br>在之前的讨论中，虽然没有具体的邮件记录，但可以推测该补丁是针对 KVM 在处理 FGT 时的改进，旨在提高虚拟化的性能和稳定性。<br><br>在本周的新讨论中，Marc Zyngier 确认已将该补丁应用于修复列表，并表示感谢。这表明补丁得到了认可，并且已经进入了代码库，标志着该问题的解决进展。整体来看，此次讨论集中在提升 KVM 的功能性和可靠性上。
                 </div>
 
                 <h4>Message List</h4>
@@ -866,7 +864,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 1 封邮件，1 位参与者。<br><br>📋 补丁内容：This patch adds a maple-tree-based lookup that records canonical-IPA to<br>shadow-IPA mappings whenever a page is mapped into any shadow (L2)<br>table...
+                    本邮件讨论的主题是针对 KVM（Kernel-based Virtual Machine）在 arm64 架构下优化影子 S2-MMU 表的反向映射操作的补丁（PATCH v2）。该补丁旨在解决在解除映射时，由于缺乏直接映射导致的性能问题，特别是在大系统中，解除映射会引发大量的循环迭代，进而影响性能并可能导致软锁死。<br><br>历史讨论中没有相关的补丁或问题，因此本周的新讨论是该补丁的首次提交。补丁的核心内容是引入了一种基于枫树（maple tree）的查找机制，用于记录规范 IPA（Intermediate Physical Address）与影子 IPA 之间的映射关系。通过这种机制，在解除映射时，代码可以直接定位到受影响的影子 IPA，从而避免全地址空间的遍历和不必要的解除映射操作，显著降低 CPU 负担并减少延迟。<br><br>本周的进展包括对补丁的更新，主要修复了在添加影子 IPA 范围时的对齐问题，并重新基于 Linux 内核 6.18-rc1 进行了重构。补丁得到了 Christoph Lameter 的审阅并确认。整体来看，该补丁有望提升 KVM 在大规模系统中的性能表现。
                 </div>
 
                 <h4>Message List</h4>
@@ -892,7 +890,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 17 封邮件，6 位参与者。<br><br>💭 这是一个征求意见（RFC）的讨论。<br><br>💬 这是一个非常活跃的讨论，有 17 封邮件往来。
+                    本邮件讨论的主题是关于在 KVM（Kernel-based Virtual Machine）中为 ARM64 平台注册主机 TSM（Trusty Secure Module）设备的 RFC（请求反馈）补丁。该补丁旨在解决如何在没有真实硬件资源的情况下创建和管理虚拟设备的问题。<br><br>在历史讨论中，参与者们探讨了补丁的初衷和实现细节。Jeremy Linton 和 Jason Gunthorpe 提到，当前的代码缺乏必要的设备标识符和匹配逻辑，导致无法有效触发模块加载。Jason 还指出，系统检测软件创建的设备的做法并不合理，建议使用更规范的 sysfs 接口。<br><br>本周的新讨论中，Jeremy Linton 提出希望能够在多个硬件平台间共享一个通用的 sysfs 节点，以简化代码结构。Aneesh Kumar K.V 询问如何为辅助设备指定父设备，Greg KH 则回应说，如果没有共享的物理资源，可以直接创建多个虚拟设备。参与者们一致认为，若存在固件设备，则应使用真实的平台设备，而不是虚拟设备。<br><br>总体来看，本周的讨论集中在如何更合理地管理和绑定设备，尤其是在固件和虚拟设备之间的关系上，推动了对补丁的进一步完善。
                 </div>
 
                 <h4>Message List</h4>
@@ -936,32 +934,6 @@
         </div>
 
         <div class="category">
-            <h2>Bug Report</h2>
-
-            <div class="thread">
-                <div class="thread-header">
-                    <h3>Saving and restoring state of a KVM VM using GICv2 fails</h3>
-                </div>
-
-                <div class="thread-meta">
-                    <span>2 messages</span>
-                    <span>2 participants</span>
-                    <span>Started: 2025-10-10</span>
-                </div>
-
-                <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。
-                </div>
-
-                <h4>Message List</h4>
-                <div class="email-list">
-<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-10-10]</span> <span class="email-subject">Saving and restoring state of a KVM VM using GICv2 fails</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Peter Maydell <span class="email-sender">&lt;peter.maydell@linaro.org&gt;</span></div>
-<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-10-12]</span> <span class="email-subject">Re: Saving and restoring state of a KVM VM using GICv2 fails</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
-                </div>
-            </div>
-        </div>
-
-        <div class="category">
             <h2>Question</h2>
 
             <div class="thread">
@@ -976,7 +948,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 3 封邮件，2 位参与者。<br><br>❓ 这是一个技术问题讨论。
+                    本邮件讨论主题为异构虚拟机的实时迁移，主要围绕在 HiSilicon ARM 服务器上实现这一功能时遇到的问题。<br><br>**原始问题**：Zhou Wang 提出了在虚拟机中禁用某些功能时可能遇到的困难，特别是如何在 EL2 中配置相关控制寄存器，以确保这些功能在虚拟机中真正被禁用。他提到了一些无法在 EL0/EL1 中实际禁用的功能（如 FEAT_AFP、FEAT_RPRES 等），并指出如果仅通过 ID 禁用，用户仍可能直接使用这些功能，从而导致在异构虚拟机迁移中出现潜在问题。<br><br>**之前讨论要点**：本周的讨论中，Marc Zyngier 指出，实际上无法完全隐藏主机的某些功能，虚拟机只能被告知这些功能可能不存在，但底层硬件仍会按预期工作。他强调，强制设置 TCR2EN 为 0 会影响其他控制位，无法实现用户的期望。<br><br>**本周新进展**：Zhou Wang 在收到 Marc 的反馈后，表示对情况有了更清晰的理解，感谢了对方的解释。整体来看，本周的讨论确认了在异构虚拟机迁移中，禁用某些功能的复杂性和限制，未提出具体的解决方案。
                 </div>
 
                 <h4>Message List</h4>
@@ -999,7 +971,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 2 封邮件，2 位参与者。<br><br>❓ 这是一个技术问题讨论。<br><br>🔑 关键讨论点：<br>• errupt that we cannot trust having taken an<br>interrupt, how long until we can trust that what we have is actually<br>correct?...<br>• How does it work when context-switching from a vcpu that has a pending<br>timer interrupt to one that doesn't?...
+                    本邮件讨论的主题是关于虚拟定时器（vtimer）中断的问题，具体表现为接收到中断时 ISTATUS 为 0。Kunkun Jiang 提出了一个问题，分析认为可能是因为在虚拟机中执行某些操作（如取消定时器）导致 ISTATUS 变为 0，而硬件清除中断的命令发送过慢，导致操作系统已读取 ICC_IAR_EL1，从而导致中断未被正确处理。<br><br>Kunkun 提出了一个补丁方案，增加了一个去激活操作，以确保在 ISTATUS 为 0 时能够正确处理中断。补丁的核心在于在判断定时器是否应触发时，增加了对中断状态的处理。<br><br>Marc Zyngier 对此进行了回应，质疑了硬件延迟的情况，并指出这种行为在现代硬件上不应出现。他提到可能存在上下文切换的问题，并对 Kunkun 的补丁提出了改进建议，认为当前的解决方案可能在不同硬件上不兼容，并可能引入其他问题。<br><br>本周的讨论集中在对补丁的有效性和兼容性的质疑上，参与者们对如何更好地处理 vtimer 中断进行了深入探讨。
                 </div>
 
                 <h4>Message List</h4>
@@ -1025,7 +997,7 @@
                 </div>
 
                 <div class="ai-summary">
-                    本 thread 共有 3 封邮件，3 位参与者。
+                    本邮件讨论主题为“KVM/arm64 fixes for 6.18, take #1”，主要集中在针对Linux内核6.18版本的KVM（Kernel-based Virtual Machine）arm64架构的修复和改进。<br><br>**原始patch/问题内容**：<br>Marc Zyngier提交了一系列修复补丁，涵盖了过去三周内收集的多个问题，包括用户空间接口（UAPI）的整理、架构修复及其他清理工作。这些补丁旨在解决KVM在arm64架构下的各种bug和改进功能。<br><br>**之前讨论要点**：<br>在历史讨论中没有相关内容，因此本次讨论主要集中在新补丁的内容和提交。<br><br>**本周的新讨论、进展或结论**：<br>本周的讨论主要围绕Marc Zyngier提交的补丁集，Paolo Bonzini表示支持补丁的提交，并对补丁中添加的“Link”信息表示理解，认为其在追踪和回溯时非常重要。Sean Christopherson也强调了在每个提交中添加“Link”的必要性，认为这对后续的维护和问题追踪具有重要价值。整体来看，本周的讨论确认了补丁的有效性，并推动了对KVM/arm64的进一步改进。
                 </div>
 
                 <h4>Message List</h4>
