@@ -77,9 +77,15 @@ jobs:
               END_ARG=""
             fi
           else
-            # 定时触发：只生成本周
-            START_ARG=""
-            END_ARG=""
+            # 定时触发（周一）：生成上周的完整报告
+            # 计算上周的周一和周日
+            LAST_WEEK_MONDAY=$(date -d 'monday-1 week' +%Y-%m-%d)
+            LAST_WEEK_SUNDAY=$(date -d "${LAST_WEEK_MONDAY} +6 days" +%Y-%m-%d)
+            LAST_YEAR=$(date -d "${LAST_WEEK_MONDAY}" +%G)
+            LAST_WEEK=$(date -d "${LAST_WEEK_MONDAY}" +%V)
+            START_ARG="--start ${LAST_WEEK_MONDAY}"
+            END_ARG="--end ${LAST_WEEK_SUNDAY}"
+            echo "📅 生成上周报告: ${LAST_YEAR}年第${LAST_WEEK}周 (${LAST_WEEK_MONDAY} 到 ${LAST_WEEK_SUNDAY})"
           fi
           
           # 自动检测是否使用 AI
