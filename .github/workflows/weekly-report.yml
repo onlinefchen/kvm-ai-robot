@@ -2,20 +2,30 @@ name: Generate Weekly KVMARM Report
 
 on:
   schedule:
-    - cron: '0 1 * * 1'
-  
+    # 每周一早上东八区8点 (UTC 0点) 自动生成上周报告
+    - cron: '0 0 * * 1'
+
   workflow_dispatch:
     inputs:
+      report_type:
+        description: '选择要生成的报告类型'
+        required: true
+        type: choice
+        options:
+          - '周报（上周完整报告）'
+          - '本周报告'
+          - '自定义日期范围'
+        default: '周报（上周完整报告）'
       start_date:
-        description: '起始日期 (YYYY-MM-DD, 可选，默认生成本周)'
+        description: '起始日期 (YYYY-MM-DD，仅"自定义日期范围"时需要填写)'
         required: false
         type: string
       end_date:
-        description: '结束日期 (YYYY-MM-DD, 可选，默认到今天)'
+        description: '结束日期 (YYYY-MM-DD，仅"自定义日期范围"时需要，不填默认为今天)'
         required: false
         type: string
       force_regenerate:
-        description: '强制重新生成（覆盖已存在的历史报告）'
+        description: '强制重新生成（覆盖已存在的历史报告，适用于所有报告类型）'
         required: false
         type: boolean
         default: false
@@ -62,30 +72,60 @@ jobs:
           OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
         run: |
           echo "🤖 Generating weekly report..."
-          
+
           # 设置日期参数
           if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
             # 手动触发
-            if [ -n "${{ inputs.start_date }}" ]; then
-              START_ARG="--start ${{ inputs.start_date }}"
-              END_ARG=""
-              if [ -n "${{ inputs.end_date }}" ]; then
-                END_ARG="--end ${{ inputs.end_date }}"
-              fi
+            REPORT_TYPE="${{ inputs.report_type }}"
+
+            if [ "$REPORT_TYPE" = "周报（上周完整报告）" ]; then
+              # 生成上周完整报告（周一到周日）
+              LAST_WEEK_MONDAY=$(date -d 'monday-1 week' +%Y-%m-%d)
+              LAST_WEEK_SUNDAY=$(date -d "${LAST_WEEK_MONDAY} +6 days" +%Y-%m-%d)
+              LAST_YEAR=$(date -d "${LAST_WEEK_MONDAY}" +%G)
+              LAST_WEEK=$(date -d "${LAST_WEEK_MONDAY}" +%V)
+              START_ARG="--start ${LAST_WEEK_MONDAY}"
+              END_ARG="--end ${LAST_WEEK_SUNDAY}"
+              echo "📅 手动触发 - 周报（上周）: ${LAST_YEAR}年第${LAST_WEEK}周 (${LAST_WEEK_MONDAY} 到 ${LAST_WEEK_SUNDAY})"
+
+            elif [ "$REPORT_TYPE" = "本周报告" ]; then
+              # 生成本周报告（本周一到今天）
+              THIS_WEEK_MONDAY=$(date -d 'monday' +%Y-%m-%d)
+              THIS_WEEK_SUNDAY=$(date -d "${THIS_WEEK_MONDAY} +6 days" +%Y-%m-%d)
+              THIS_YEAR=$(date -d "${THIS_WEEK_MONDAY}" +%G)
+              THIS_WEEK=$(date -d "${THIS_WEEK_MONDAY}" +%V)
+              START_ARG="--start ${THIS_WEEK_MONDAY}"
+              END_ARG="--end ${THIS_WEEK_SUNDAY}"
+              echo "📅 手动触发 - 本周报告: ${THIS_YEAR}年第${THIS_WEEK}周 (${THIS_WEEK_MONDAY} 到 ${THIS_WEEK_SUNDAY})"
+
             else
-              START_ARG=""
-              END_ARG=""
+              # 自定义日期范围
+              if [ -n "${{ inputs.start_date }}" ]; then
+                START_ARG="--start ${{ inputs.start_date }}"
+                END_ARG=""
+                # 结束日期：如果提供则使用，否则默认为今天
+                if [ -n "${{ inputs.end_date }}" ]; then
+                  END_ARG="--end ${{ inputs.end_date }}"
+                  echo "📅 手动触发 - 自定义日期: ${{ inputs.start_date }} 到 ${{ inputs.end_date }}"
+                else
+                  TODAY=$(date +%Y-%m-%d)
+                  END_ARG="--end ${TODAY}"
+                  echo "📅 手动触发 - 自定义日期: ${{ inputs.start_date }} 到 ${TODAY} (默认到今天)"
+                fi
+              else
+                echo "❌ 错误：选择自定义日期范围时必须提供起始日期"
+                exit 1
+              fi
             fi
           else
-            # 定时触发（周一）：生成上周的完整报告
-            # 计算上周的周一和周日
+            # 定时任务（每周一东八区8点）：生成上周的完整报告
             LAST_WEEK_MONDAY=$(date -d 'monday-1 week' +%Y-%m-%d)
             LAST_WEEK_SUNDAY=$(date -d "${LAST_WEEK_MONDAY} +6 days" +%Y-%m-%d)
             LAST_YEAR=$(date -d "${LAST_WEEK_MONDAY}" +%G)
             LAST_WEEK=$(date -d "${LAST_WEEK_MONDAY}" +%V)
             START_ARG="--start ${LAST_WEEK_MONDAY}"
             END_ARG="--end ${LAST_WEEK_SUNDAY}"
-            echo "📅 生成上周报告: ${LAST_YEAR}年第${LAST_WEEK}周 (${LAST_WEEK_MONDAY} 到 ${LAST_WEEK_SUNDAY})"
+            echo "📅 定时任务 - 周报（上周）: ${LAST_YEAR}年第${LAST_WEEK}周 (${LAST_WEEK_MONDAY} 到 ${LAST_WEEK_SUNDAY})"
           fi
           
           # 自动检测是否使用 AI
