@@ -6,11 +6,11 @@
 
 **GitHub Pages**: https://onlinefchen.github.io/kvm-ai-robot/
 
-- 📅 **当前周报告**: https://onlinefchen.github.io/kvm-ai-robot/ （自动跳转）
+- 📅 **最新周报（上周）**: https://onlinefchen.github.io/kvm-ai-robot/ （自动跳转）
 - 📚 **历史归档**: https://onlinefchen.github.io/kvm-ai-robot/archive.html
 - 🤖 **GitHub Actions**: https://github.com/onlinefchen/kvm-ai-robot/actions
 
-每周一上午 9:00（北京时间）自动更新！
+每周一上午 8:00（北京时间）自动生成上周完整报告！
 
 ---
 
@@ -69,9 +69,11 @@ python3 analyze_with_ai_summary.py --ai claude --model claude-3-haiku-20240307
 - 每周从周一开始，到周日结束（ISO 8601 标准）
 
 ### 🔄 智能文件管理
+- **定时任务（周一）**：强制覆盖上周报告，确保数据最完整
 - **当前周**：总是重新生成（数据可能更新）
 - **历史周**：已存在则跳过（避免重复生成，节省 API 费用）
 - **空周**：没有邮件自动跳过
+- **强制模式（--force）**：覆盖所有已存在的报告
 
 ### 🤖 多种 AI 后端支持
 - **OpenAI**: GPT-4o, GPT-4o-mini
@@ -106,6 +108,7 @@ python3 analyze_with_ai_summary.py [选项]
 | `--end DATE` | 结束日期（包含该日期所在周，默认为今天） | `--end 2025-03-31` |
 | `--ai BACKEND` | AI 后端: `openai`, `claude`, `none`（默认） | `--ai openai` |
 | `--model MODEL` | AI 模型名称 | `--model gpt-4o-mini` |
+| `--force` | 强制重新生成（覆盖已存在的历史报告） | `--force` |
 | `--git-dir DIR` | Git 仓库路径（默认: `git/0.git`） | `--git-dir /path/to/repo` |
 | `-o FILE` | 输出文件路径（不含扩展名，仅单周模式） | `-o report` |
 | `-h, --help` | 显示帮助信息 | `-h` |
@@ -122,30 +125,79 @@ python3 analyze_with_ai_summary.py [选项]
 
 ## 使用场景
 
-### 场景1: 每周一生成上周报告
+### 场景1: GitHub Actions 自动化（推荐）
+- 每周一上午 8:00（北京时间）自动生成上周完整报告
+- 自动强制覆盖，确保数据最完整
+- 支持手动触发，可选择：
+  - 周报（上周完整报告）
+  - 本周报告
+  - 自定义日期范围
+
+### 场景2: 本地生成本周报告
 ```bash
-# 添加到 crontab
-0 9 * * 1 cd /path/to/kvmarm && python3 analyze_with_ai_summary.py
+# 生成本周报告（默认）
+python3 analyze_with_ai_summary.py
 ```
 
-### 场景2: 批量生成历史报告
+### 场景3: 批量生成历史报告
 ```bash
 # 生成2025年第一季度所有报告（使用 OpenAI）
 export OPENAI_API_KEY='your-key'
 python3 analyze_with_ai_summary.py --start 2025-01-01 --end 2025-03-31 --ai openai
 ```
 
-### 场景3: 补充生成缺失的周
+### 场景4: 补充生成缺失的周
 ```bash
 # 从年初到现在，已存在的周会自动跳过
 python3 analyze_with_ai_summary.py --start 2025-01-01
 ```
 
-### 场景4: 重新生成当前周（数据更新后）
+### 场景5: 强制重新生成历史报告
 ```bash
-# 当前周报告会自动覆盖
-python3 analyze_with_ai_summary.py
+# 使用 --force 覆盖已存在的报告
+python3 analyze_with_ai_summary.py --start 2025-10-01 --end 2025-10-31 --force
 ```
+
+## 🚀 GitHub Actions 手动触发
+
+访问 [GitHub Actions](https://github.com/onlinefchen/kvm-ai-robot/actions) 页面，点击 "Generate Weekly KVMARM Report" → "Run workflow"
+
+### 可选参数
+
+1. **报告类型**（下拉选择）
+   - 📅 **周报（上周完整报告）** - 默认，生成上周一到上周日的完整报告
+   - 📅 **本周报告** - 生成本周一到本周日的报告
+   - 📅 **自定义日期范围** - 灵活指定任意日期范围
+
+2. **起始日期**（仅自定义日期范围时填写）
+   - 格式：YYYY-MM-DD
+   - 示例：2025-01-01
+
+3. **结束日期**（仅自定义日期范围时填写，可选）
+   - 格式：YYYY-MM-DD
+   - 不填写则默认为今天
+   - 示例：2025-03-31
+
+4. **强制重新生成**（开关，默认关闭）
+   - 开启后覆盖已存在的历史报告
+   - 适用于所有报告类型
+
+### 使用示例
+
+**快速生成上周报告**
+1. 报告类型：选择"周报（上周完整报告）"
+2. 点击 "Run workflow" ✅
+
+**查看本周进展**
+1. 报告类型：选择"本周报告"
+2. 点击 "Run workflow" ✅
+
+**生成某个月的所有报告**
+1. 报告类型：选择"自定义日期范围"
+2. 起始日期：2025-10-01
+3. 结束日期：2025-10-31（或留空默认到今天）
+4. 强制重新生成：勾选（如果需要覆盖）
+5. 点击 "Run workflow" ✅
 
 ## 安装依赖
 

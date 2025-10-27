@@ -139,7 +139,12 @@ jobs:
 
           # 检查是否强制重新生成
           FORCE_ARG=""
-          if [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_regenerate }}" = "true" ]; then
+          if [ "${{ github.event_name }}" = "schedule" ]; then
+            # 定时任务：强制覆盖上周报告（确保数据最完整）
+            echo "🔄 定时任务模式：将强制覆盖上周报告"
+            FORCE_ARG="--force"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ] && [ "${{ inputs.force_regenerate }}" = "true" ]; then
+            # 手动触发：按用户选择决定是否强制覆盖
             echo "🔄 强制重新生成模式：将覆盖所有已存在的报告"
             FORCE_ARG="--force"
           fi
