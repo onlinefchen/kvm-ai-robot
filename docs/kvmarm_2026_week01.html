@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KVMARM 邮件列表 AI 总结报告</title>
+    <style>
+        body {
+            font-family: 'Courier New', 'Courier', monospace;
+            line-height: 1.5;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 30px 40px;
+            background-color: #ffffff;
+            color: #222;
+        }
+        .container {
+            background: #ffffff;
+        }
+        h1 {
+            font-size: 2.2em;
+            font-weight: bold;
+            color: #000;
+            margin-bottom: 0.3em;
+            text-align: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 15px;
+        }
+        h2 {
+            font-size: 1.6em;
+            font-weight: bold;
+            color: #000;
+            margin-top: 2em;
+            margin-bottom: 0.6em;
+            border-bottom: 1px solid #333;
+            padding-bottom: 8px;
+        }
+        h3 {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #111;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h4 {
+            font-size: 1.05em;
+            font-weight: bold;
+            color: #333;
+            margin-top: 1.2em;
+            margin-bottom: 0.5em;
+        }
+        .meta-info {
+            background: #f9f9f9;
+            border: 1px solid #ddd;
+            padding: 15px 20px;
+            margin: 20px 0;
+            font-size: 0.95em;
+            line-height: 1.6;
+        }
+        .meta-info p {
+            margin: 6px 0;
+            color: #444;
+        }
+        .meta-info strong {
+            color: #000;
+            font-weight: bold;
+        }
+        .stats {
+            display: table;
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border: 1px solid #000;
+        }
+        .stat-card {
+            display: table-cell;
+            border: 1px solid #000;
+            padding: 12px 15px;
+            text-align: center;
+            background: #fafafa;
+        }
+        .stat-card h3 {
+            margin: 0;
+            color: #000;
+            font-size: 1.8em;
+            font-weight: bold;
+            border: none;
+            padding: 0;
+        }
+        .stat-card p {
+            margin: 5px 0 0 0;
+            color: #444;
+            font-size: 0.9em;
+            font-weight: normal;
+        }
+        .category {
+            margin: 30px 0;
+        }
+        .thread {
+            margin: 25px 0;
+            padding: 15px;
+            background: #fafafa;
+            border: 1px solid #ccc;
+            page-break-inside: avoid;
+        }
+        .thread-header {
+            margin-bottom: 12px;
+            border-bottom: 1px solid #ddd;
+            padding-bottom: 10px;
+        }
+        .thread-header h3 {
+            font-size: 1.15em;
+            font-weight: bold;
+            color: #000;
+            margin: 0;
+        }
+        .thread-meta {
+            display: block;
+            margin: 8px 0 12px 0;
+            font-size: 0.9em;
+            color: #555;
+            font-style: italic;
+        }
+        .thread-meta span {
+            margin-right: 15px;
+        }
+        .ai-summary {
+            background: #fff;
+            border-left: 3px solid #666;
+            padding: 12px 15px;
+            margin: 15px 0;
+            line-height: 1.6;
+            color: #222;
+            font-style: italic;
+        }
+        .email-list {
+            background: #fff;
+            border: 1px solid #ccc;
+            padding: 10px 15px;
+            font-family: 'Courier New', 'Consolas', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+            overflow-x: auto;
+            margin: 10px 0;
+        }
+        .email-item {
+            margin: 4px 0;
+            padding: 2px 0;
+            color: #222;
+        }
+        .email-item.historical {
+            background: #f5f5f5;
+            border-left: 3px solid #999;
+            padding-left: 8px;
+            opacity: 0.8;
+        }
+        .email-item.new {
+            background: #fffef0;
+            border-left: 3px solid #0066cc;
+            padding-left: 8px;
+        }
+        .email-date {
+            color: #0066cc;
+            font-weight: bold;
+        }
+        .email-date.historical {
+            color: #666;
+        }
+        .email-sender {
+            color: #c30;
+            font-weight: normal;
+        }
+        .email-subject {
+            color: #000;
+        }
+        .historical-marker {
+            color: #999;
+            font-size: 0.85em;
+            font-style: italic;
+        }
+        .new-marker {
+            color: #0066cc;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .archive-link {
+            display: inline-block;
+            margin: 15px 0;
+            padding: 10px 20px;
+            background: #333;
+            color: #fff;
+            text-decoration: none;
+            border: 2px solid #000;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+        .archive-link:hover {
+            background: #000;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>KVMARM Mailing List Analysis Report</h1>
+
+        <div class="meta-info">
+            <p><strong>Generated:</strong> 2026-01-05 00:27</p>
+            <p><strong>Time Period:</strong> 2026年12月 第1周 (12/29 - 01/04)</p>
+            <p><strong>Total Messages:</strong> 53 | <strong>Total Threads:</strong> 6</p>
+            <p style="text-align: center;"><a href="archive.html" class="archive-link">📚 历史归档 Archive</a></p>
+        </div>
+
+
+        <div class="category">
+            <h2>PATCH</h2>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v4 00/21] KVM: selftests: Add Nested NPT support</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>30 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-12-30</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论的主题是关于 KVM（Kernel-based Virtual Machine）自测试的增强，特别是增加对嵌套 NPT（Nested Page Table）支持的补丁。以下是讨论的主要内容总结：<br><br>1. **原始补丁内容**：<br>   该补丁系列（[PATCH v4 00/21]）旨在为 KVM 自测试添加对嵌套 NPT 的支持，并扩展现有的测试用例，以验证 KVM 在处理嵌套虚拟化时的功能。<br><br>2. **历史讨论要点**：<br>   - 之前的版本中，补丁主要集中在对 EPT（Extended Page Table）的支持上，而本次补丁则引入了对 NPT 的支持。<br>   - 讨论中提到了一些潜在的测试不稳定性，尤其是在内存压力大的情况下，可能会影响测试结果的可靠性。<br><br>3. **本周的新讨论与进展**：<br>   - 本周的邮件中，参与者们对补丁进行了详细的审查和讨论，提出了代码的改进建议，包括如何更好地管理 PTE（Page Table Entry）位掩码，以及如何简化测试代码。<br>   - 讨论还涉及到如何在不同的 CPU 架构（如 AMD 和 Intel）上实现 NPT 支持，以及如何确保测试的通用性和可维护性。<br>   - 最后，补丁中还增加了对嵌套 SVM（Secure Virtual Machine）的支持，允许在 AMD CPU 上运行相关的测试。<br><br>总的来说，本周的讨论集中在提升 KVM 嵌套虚拟化支持的测试覆盖率和稳定性上，参与者们积极提出改进意见，以确保补丁的质量和功能完整性。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 00/21] KVM: selftests: Add Nested NPT support</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 01/21] KVM: selftests: Make __vm_get_page_table_entry() static</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 02/21] KVM: selftests: Stop passing a memslot to nested_map_memslot()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 03/21] KVM: selftests: Rename nested TDP mapping functions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 04/21] KVM: selftests: Kill eptPageTablePointer</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 05/21] KVM: selftests: Stop setting A/D bits when creating
+ EPT PTEs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 06/21] KVM: selftests: Add "struct kvm_mmu" to track a
+ given MMU instance</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 07/21] KVM: selftests: Plumb "struct kvm_mmu" into x86's
+ MMU APIs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 08/21] KVM: selftests: Add a "struct kvm_mmu_arch arch"
+ member to kvm_mmu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 09/21] KVM: selftests: Move PTE bitmasks to kvm_mmu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 10/21] KVM: selftests: Use a TDP MMU to share EPT page
+ tables between vCPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 11/21] KVM: selftests: Stop passing VMX metadata to TDP
+ mapping functions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 12/21] KVM: selftests: Add a stage-2 MMU instance to kvm_vm</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 13/21] KVM: selftests: Reuse virt mapping functions for
+ nested EPTs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 14/21] KVM: selftests: Move TDP mapping functions outside
+ of vmx.c</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 15/21] KVM: selftests: Allow kvm_cpu_has_ept() to be called
+ on AMD CPUs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 16/21] KVM: selftests: Add support for nested NPTs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 17/21] KVM: selftests: Set the user bit on nested NPT PTEs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 18/21] KVM: selftests: Extend vmx_dirty_log_test to cover SVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 19/21] KVM: selftests: Extend memstress to run on nested SVM</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 20/21] KVM: selftests: Rename vm_get_page_table_entry() to vm_get_pte()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">[PATCH v4 21/21] KVM: selftests: Test READ=>WRITE dirty logging
+ behavior for shadow MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 06/21] KVM: selftests: Add "struct kvm_mmu" to track a
+ given MMU instance</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 08/21] KVM: selftests: Add a "struct kvm_mmu_arch
+ arch" member to kvm_mmu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 11/21] KVM: selftests: Stop passing VMX metadata to
+ TDP mapping functions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 08/21] KVM: selftests: Add a "struct kvm_mmu_arch
+ arch" member to kvm_mmu</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 12/21] KVM: selftests: Add a stage-2 MMU instance to
+ kvm_vm</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 20/21] KVM: selftests: Rename
+ vm_get_page_table_entry() to vm_get_pte()</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 11/21] KVM: selftests: Stop passing VMX metadata to
+ TDP mapping functions</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v4 21/21] KVM: selftests: Test READ=>WRITE dirty logging
+ behavior for shadow MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yosry Ahmed <span class="email-sender">&lt;yosry.ahmed@linux.dev&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v3 0/4] KVM: selftests: arm64: Improve diagnostics from
+ set_id_regs</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>9 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-12-19</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了针对 KVM 自测试的改进，特别是针对 arm64 架构的 set_id_regs 功能的诊断能力提升。历史讨论中，Mark Brown 提出了四个补丁（patch），旨在改善测试结果的可读性和准确性。具体内容包括：1）将读取测试寄存器的结果报告为单独的测试，以便更清晰地了解测试失败的原因；2）将寄存器重置测试分开报告，以便明确指出哪些寄存器存在问题；3）将某些非致命的断言改为标准的 kselftest 结果报告，以提高可用性；4）在 aarch64 系统中跳过 32 位 ID 寄存器的测试，以避免不必要的失败。<br><br>在本周的新讨论中，参与者 Ben Horgan 对所有补丁进行了审查，并表示认可，认为这些改进是有益的。他对第三个补丁表示赞同，但对第四个补丁提出了疑问，认为可能会排除不必要的寄存器测试。整体来看，本周的讨论主要集中在对补丁的认可和对某些实现细节的质疑上。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v3 0/4] KVM: selftests: arm64: Improve diagnostics from
+ set_id_regs</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Brown <span class="email-sender">&lt;broonie@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v3 1/4] KVM: selftests: arm64: Report set_id_reg reads of
+ test registers as tests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Brown <span class="email-sender">&lt;broonie@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v3 2/4] KVM: selftests: arm64: Report register reset tests
+ individually</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Brown <span class="email-sender">&lt;broonie@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v3 3/4] KVM: selftests: arm64: Make set_id_regs bitfield
+ validatity checks non-fatal</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Brown <span class="email-sender">&lt;broonie@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v3 4/4] KVM: selftests: arm64: Skip all 32 bit IDs when
+ set_id_regs is aarch64 only</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mark Brown <span class="email-sender">&lt;broonie@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v3 1/4] KVM: selftests: arm64: Report set_id_reg reads of
+ test registers as tests</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v3 2/4] KVM: selftests: arm64: Report register reset tests
+ individually</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v3 3/4] KVM: selftests: arm64: Make set_id_regs bitfield
+ validatity checks non-fatal</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v3 4/4] KVM: selftests: arm64: Skip all 32 bit IDs when
+ set_id_regs is aarch64 only</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v2 00/45] arm_mpam: Add KVM/arm64 and resctrl glue code</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>7 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-12-19</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件线程讨论了关于 ARM 架构下的 KVM（Kernel-based Virtual Machine）和 MPAM（Memory Partitioning and Monitoring）相关的补丁，主要集中在如何处理虚拟化环境中的资源监控和分区。<br><br>**原始补丁内容**：<br>补丁系列的主题是“arm_mpam: Add KVM/arm64 and resctrl glue code”，由 Ben Horgan 提交，旨在解决 MPAM 在 KVM 环境中的实现问题。补丁包括对支持 SME（Scalable Matrix Extension）系统的处理，KVM 部分的重构，以及一些小的错误修复。<br><br>**之前讨论要点**：<br>在历史讨论中，参与者探讨了如何在更改 MPAM 陷阱时保持主机的 MPAM 配置不变，以及如何强制虚拟机的 EL1 使用用户空间的 PARTID 配置。Oliver Upton 提出了一些建议，包括文档化 MPAM1_EL1 写入后的上下文同步问题，以及使用掩码提取相关字段以防未来架构变更导致的问题。<br><br>**本周新讨论进展**：<br>本周的讨论中，Ben Horgan 对 Oliver 的建议进行了回应，进一步澄清了在更新陷阱时 PARTID 和 PMG 保持不变的原因，并确认了在进入用户空间时的同步机制。此外，Ben 表示将根据 Oliver 的建议进行相应的修改。<br><br>总体来看，此次讨论围绕补丁的细节进行了深入的技术交流，参与者积极提出建议以优化补丁的实现。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v2 00/45] arm_mpam: Add KVM/arm64 and resctrl glue code</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v2 05/45] KVM: arm64: Preserve host MPAM configuration when changing traps</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">[PATCH v2 13/45] KVM: arm64: Force guest EL1 to use user-space's partid configuration</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">Re: [PATCH v2 05/45] KVM: arm64: Preserve host MPAM configuration
+ when changing traps</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Oliver Upton <span class="email-sender">&lt;oupton@kernel.org&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-19]</span> <span class="email-subject">Re: [PATCH v2 13/45] KVM: arm64: Force guest EL1 to use user-space's
+ partid configuration</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Oliver Upton <span class="email-sender">&lt;oupton@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v2 05/45] KVM: arm64: Preserve host MPAM configuration
+ when changing traps</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2026-01-02]</span> <span class="email-subject">Re: [PATCH v2 13/45] KVM: arm64: Force guest EL1 to use user-space's
+ partid configuration</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Ben Horgan <span class="email-sender">&lt;ben.horgan@arm.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH 0/1] KVM: arm64: Fix hyp VA size between layout and MMU</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>4 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-12-23</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件讨论的主题是关于 KVM（Kernel-based Virtual Machine）在 arm64 架构下的虚拟地址空间（VA）大小问题。历史讨论中，Petteri Kangaslampi 提出了一个补丁（PATCH 0/1），旨在修复 KVM 初始化代码中 hypervisor 虚拟地址空间大小计算的不一致性。具体来说，MMU 代码使用了更大的虚拟地址位数，而 VA 布局代码则仅使用内核的虚拟地址大小。这导致在某些配置下，计算 hypervisor 物理虚拟偏移时可能出现问题。<br><br>在补丁的后续讨论中，Marc Zyngier 对补丁提出了批评，指出该补丁是针对一年前的内核版本，建议提交一个经过测试的补丁，最好是针对最新的内核版本。此外，他还建议将 VA 宽度的计算逻辑集中在一个地方，以避免代码重复，并提高一致性。<br><br>本周的新讨论主要集中在补丁的适用性和逻辑结构的优化上，Marc Zyngier 强调了代码的整洁性和一致性，建议开发者在修复问题的同时，考虑整体架构的改进。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-23]</span> <span class="email-subject">[PATCH 0/1] KVM: arm64: Fix hyp VA size between layout and MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Petteri Kangaslampi <span class="email-sender">&lt;pekangas@google.com&gt;</span></div>
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-23]</span> <span class="email-subject">[PATCH 1/1] KVM: arm64: Fix hyp VA size between layout and MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Petteri Kangaslampi <span class="email-sender">&lt;pekangas@google.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">Re: [PATCH 0/1] KVM: arm64: Fix hyp VA size between layout and MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-30]</span> <span class="email-subject">Re: [PATCH 1/1] KVM: arm64: Fix hyp VA size between layout and MMU</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Marc Zyngier <span class="email-sender">&lt;maz@kernel.org&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v6 15/44] KVM: x86/pmu: Snapshot host (i.e. perf's)
+ reported PMU capabilities</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>2 messages</span>
+                    <span>2 participants</span>
+                    <span>Started: 2025-12-25</span>
+                </div>
+
+                <div class="ai-summary">
+                    在本邮件线程中，讨论的主题是关于一个补丁（patch）“KVM: x86/pmu: Snapshot host (i.e. perf's) reported PMU capabilities”的问题。该补丁旨在快照主机的性能监控单元（PMU）能力。<br><br>在历史讨论中，Sean Christopherson 指出该补丁存在合并错误，并表示实际上不需要这个补丁，因为原始补丁“51f34b1”已经被合并到主干中。此外，团队还提交了一个新的补丁“034417c1439a”，用于修复之前补丁引入的警告。<br><br>在本周的新讨论中，Dapeng Mi 对之前的讨论进行了回应，承认自己在重基（rebase）时忽略了这个问题，并表示忘记在混合PMU上进行测试。Dapeng 对Sean的指正表示感谢，显示出对问题的重视和对后续工作的改进意愿。<br><br>总体来看，本周的讨论主要集中在对补丁合并错误的确认及对后续测试的重视，反映出团队在处理补丁和代码质量方面的协作与沟通。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item historical"><span class="historical-marker">[历史]</span> <span class="email-date historical">[2025-12-25]</span> <span class="email-subject">Re: [PATCH v6 15/44] KVM: x86/pmu: Snapshot host (i.e. perf's)
+ reported PMU capabilities</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Mi, Dapeng <span class="email-sender">&lt;dapeng1.mi@linux.intel.com&gt;</span></div>
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-29]</span> <span class="email-subject">Re: [PATCH v6 15/44] KVM: x86/pmu: Snapshot host (i.e. perf's)
+ reported PMU capabilities</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Sean Christopherson <span class="email-sender">&lt;seanjc@google.com&gt;</span></div>
+                </div>
+            </div>
+
+            <div class="thread">
+                <div class="thread-header">
+                    <h3>[PATCH v11 RESEND 0/9] support FEAT_LSUI</h3>
+                </div>
+
+                <div class="thread-meta">
+                    <span>1 messages</span>
+                    <span>1 participants</span>
+                    <span>Started: 2025-12-31</span>
+                </div>
+
+                <div class="ai-summary">
+                    本邮件主题为“[PATCH v11 RESEND 0/9] support FEAT_LSUI”，主要讨论的是对 Linux 内核中支持 FEAT_LSUI 特性的补丁。该补丁旨在增强内核对特定硬件功能的支持。<br><br>在历史讨论中，虽然没有具体的邮件内容提供，但可以推测之前的讨论可能集中在该特性的重要性、实现细节以及对现有系统的影响等方面。<br><br>在本周的新讨论中，参与者 Yeoreum Yun 发送了一封邮件，主要是对该补丁的跟进，表示希望确认是否有遗漏的回复。这表明该补丁仍在等待社区的反馈和进一步的讨论。<br><br>总体来看，当前的进展是补丁仍在审查阶段，尚未得到最终的确认或合并，参与者正积极寻求社区的关注和反馈。
+                </div>
+
+                <h4>Message List</h4>
+                <div class="email-list">
+<div class="email-item new"><span class="new-marker">[本周]</span> <span class="email-date">[2025-12-31]</span> <span class="email-subject">Re: [PATCH v11 RESEND 0/9] support FEAT_LSUI</span><br>&nbsp;&nbsp;&nbsp;&nbsp;Author: Yeoreum Yun <span class="email-sender">&lt;yeoreum.yun@arm.com&gt;</span></div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
